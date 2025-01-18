@@ -18,22 +18,33 @@ export class FilterService {
 
   filterAll<T>(array: Array<T>, keyword: string): Array<T> {
     if (array.length <= 0) return array;
-    const keys = Object.keys(array);
+    const keys = typeof array[0] === 'object' && array[0] !== null
+      ? Object.keys(array[0]) : [];
     return array.filter((item: T) => {
       for (const key of keys) {
         const value = item[key as keyof T];
-        if (value != null && value.toString().includes(keyword)) return true;
+        if (value != null && value.toString().includes(keyword)) {
+          return true;
+        }
       }
       return false;
     });
   }
 
-  filterColumnHasValue<T>(array: Array<T>, key: keyof T) {
-    //TODO: for the radio button
+  filterColumnHasValue<T>(array: Array<T>, key: keyof T): Array<T> {
+    if (array.length <= 0) return array;
+    return array.filter((item: T) => {
+      const value = item[key as keyof T];
+      return value != null
+    })
   }
 
-  filterColumnHasNoValue<T>(array: Array<T>, key: keyof T) {
-    //TODO for the radio button
+  filterColumnHasNoValue<T>(array: Array<T>, key: keyof T): Array<T> {
+    if (array.length <= 0) return array;
+    return array.filter((item: T) => {
+      const value = item[key as keyof T];
+      return value == null
+    })
   }
 
 }
