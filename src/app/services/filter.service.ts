@@ -9,21 +9,19 @@ export class FilterService {
   }
 
   filterColumn<T>(array: Array<T>, key: keyof T, keyword: string): Array<T> {
-    if (array.length <= 0) return array;
     return array.filter((item: T) => {
       const value = item[key];
-      return value != null && value.toString().includes(keyword);
+      return value != null && value.toString().toLowerCase().includes(keyword.toLowerCase());
     })
   }
 
   filterAll<T>(array: Array<T>, keyword: string): Array<T> {
-    if (array.length <= 0) return array;
     const keys = typeof array[0] === 'object' && array[0] !== null
       ? Object.keys(array[0]) : [];
     return array.filter((item: T) => {
       for (const key of keys) {
         const value = item[key as keyof T];
-        if (value != null && value.toString().includes(keyword)) {
+        if (value != null && value.toString().toLowerCase().includes(keyword.toLowerCase())) {
           return true;
         }
       }
@@ -32,7 +30,6 @@ export class FilterService {
   }
 
   filterColumnHasValue<T>(array: Array<T>, key: keyof T): Array<T> {
-    if (array.length <= 0) return array;
     return array.filter((item: T) => {
       const value = item[key as keyof T];
       return value != null
@@ -40,7 +37,6 @@ export class FilterService {
   }
 
   filterColumnHasNoValue<T>(array: Array<T>, key: keyof T): Array<T> {
-    if (array.length <= 0) return array;
     return array.filter((item: T) => {
       const value = item[key as keyof T];
       return value == null

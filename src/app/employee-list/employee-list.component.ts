@@ -32,8 +32,8 @@ export class EmployeeListComponent {
       next: (employees) => {
         const nameKey = 'lastName';
         //let employeesArray = this.filterService.filterColumn(employees, nameKey as keyof Employee, 'frau');
-        //let employeesArray = this.filterService.filterAll(employees, 'Meta-Sattler');
-        let employeesArray = this.filterService.filterColumnHasNoValue(employees, nameKey as keyof Employee);
+        let employeesArray = this.filterService.filterAll(employees, 'Meta-Sattler');
+        //let employeesArray = this.filterService.filterColumnHasNoValue(employees, nameKey as keyof Employee);
         this.employees$ = of(employeesArray);
       },
       error: (err) => console.error('Error fetching employees:', err),
