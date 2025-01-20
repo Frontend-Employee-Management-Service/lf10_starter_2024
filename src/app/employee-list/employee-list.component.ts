@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Observable, of} from "rxjs";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Employee} from "../Employee";
+import {HttpClient} from "@angular/common/http";
+import {Employee} from "../models/Employee";
+import {EmployeeService} from "../services/employee.service";
+import {EmployeesCacheService} from "../services/employees-cache.service";
 import {FilterService} from "../services/filter.service";
 
 @Component({
@@ -12,31 +13,30 @@ import {FilterService} from "../services/filter.service";
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent {
-  employees$: Observable<Employee[]>;
+  employees: WritableSignal<Employee[]> = signal([]);
+  employee?: Employee;
 
-  constructor(private http: HttpClient, private filterService: FilterService) {
-    this.employees$ = of([]);
-    this.fetchData();
+  constructor(private http: HttpClient, private service: EmployeeService,
+              private employeeCache: EmployeesCacheService, private filterService: FilterService) {
+    employeeCache.refresh();
+    this.employees = this.employeeCache.read();
     this.test();
   }
 
-  fetchData() {
-    this.employees$ = this.http.get<Employee[]>('http://localhost:8089/employees', {
-      headers: new HttpHeaders()
-        .set('Content-Type', 'application/json')
-    });
+  test(): void {
+    const subscription = this.service.selectAll()
+      .subscribe(() => {
+        const employees = this.employees();
+        try {
+          const nameKey = 'lastName';
+          //let employeesArray = this.filterService.filterColumn(employees, nameKey as keyof Employee, 'frau');
+          let employeesArray = this.filterService.filterAll(employees, 'Meta-Sattler');
+          //let employeesArray = this.filterService.filterColumnHasNoValue(employees, nameKey as keyof Employee);
+          this.employees.set(employeesArray);
+        } catch (err) {
+          console.error('Error fetching employees:', err);
+        }
+      });
   }
 
-  test(): void {
-    this.employees$.subscribe({
-      next: (employees) => {
-        const nameKey = 'lastName';
-        //let employeesArray = this.filterService.filterColumn(employees, nameKey as keyof Employee, 'frau');
-        let employeesArray = this.filterService.filterAll(employees, 'Meta-Sattler');
-        //let employeesArray = this.filterService.filterColumnHasNoValue(employees, nameKey as keyof Employee);
-        this.employees$ = of(employeesArray);
-      },
-      error: (err) => console.error('Error fetching employees:', err),
-    });
-  }
 }
