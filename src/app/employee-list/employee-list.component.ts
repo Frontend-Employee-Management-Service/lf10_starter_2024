@@ -17,26 +17,9 @@ export class EmployeeListComponent {
   employee?: Employee;
 
   constructor(private http: HttpClient, private service: EmployeeService,
-              private employeeCache: EmployeesCacheService, private filterService: FilterService) {
+              private employeeCache: EmployeesCacheService) {
     employeeCache.refresh();
     this.employees = this.employeeCache.read();
-    this.test();
-  }
-
-  test(): void {
-    const subscription = this.service.selectAll()
-      .subscribe(() => {
-        const employees = this.employees();
-        try {
-          const nameKey = 'lastName';
-          //let employeesArray = this.filterService.filterColumn(employees, nameKey as keyof Employee, 'frau');
-          let employeesArray = this.filterService.filterAll(employees, 'Meta-Sattler');
-          //let employeesArray = this.filterService.filterColumnHasNoValue(employees, nameKey as keyof Employee);
-          this.employees.set(employeesArray);
-        } catch (err) {
-          console.error('Error fetching employees:', err);
-        }
-      });
   }
 
 }
