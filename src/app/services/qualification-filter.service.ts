@@ -13,18 +13,14 @@ export class QualificationFilterService extends FilterService {
   }
 
   filterQualificationInUsed(employees: Employee[]): Qualification[] {
-    let inUsedQualifications: Qualification[] = [];
+    let qualifications: Qualification[] = [];
     employees.forEach(employee => {
-        const keys = Object.keys(employee);
-        const key = keys[keys.length - 1] as keyof Employee;
-        let qualification = employee[key];
-        if (Array.isArray(qualification)) {
-          inUsedQualifications = inUsedQualifications.concat(qualification as Qualification[]);
-        }
+        qualifications = qualifications.concat(employee.qualifications ?? []);
       }
     );
-    let uniqueQualifications = new Set(inUsedQualifications);
-    return [...uniqueQualifications];
+    return Array.from(
+      new Set(qualifications.map(item => JSON.stringify(item)))
+    ).map(item => JSON.parse(item));
   }
 
   filterQualificationByEmployeeName(employees: Employee[], name: string): Qualification[] {
@@ -33,4 +29,5 @@ export class QualificationFilterService extends FilterService {
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "firstName", name));
     return this.filterQualificationInUsed(matchingEmployees);
   }
+
 }
