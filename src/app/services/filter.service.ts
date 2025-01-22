@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {Qualification} from "../models/Qualification";
+import {Employee} from "../models/Employee";
 
 @Injectable({
     providedIn: 'root'
@@ -28,5 +30,18 @@ export class FilterService {
             return false;
         });
     }
+
+    filterQualificationInUsed(employees: Employee[]) {
+        const qualifications: Qualification[] = employees.flatMap(employee => employee.qualifications ?? []);
+        return [...new Set(qualifications)];
+    }
+
+    filterQualificationByEmpolyeeName(employees: Employee[], name: string) {
+        let matchingEmployees: Employee[] = [];
+        matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "lastName", name));
+        matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "firstName", name));
+        return this.filterQualificationInUsed(matchingEmployees);
+    }
+
 
 }
