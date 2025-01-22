@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { EmbeddedViewRef, Injectable } from '@angular/core';
 import { Qualification } from '../models/Qualification';
 import { AppGlobals } from '../app.globals';
 import { catchError, Observable, take } from 'rxjs';
+import { Employee } from '../Employee';
 
 @Injectable({
   providedIn: 'root'
@@ -59,13 +60,8 @@ export class QualificationService {
   }
 
   delete(id: number): Observable<any> {
+    console.log("service id: " + id);
     const url: string = AppGlobals.EMPLOYEES_MANAGER_BASE_URL + this.urlSnippet + `/${id}`;
-    return this.httpClient.delete<any>(url).pipe(
-      take(1),
-      catchError(error => {
-        console.error(error);
-        throw new Error(error);
-      })
-    );
+    return this.httpClient.delete<any>(url);
   }
 }
