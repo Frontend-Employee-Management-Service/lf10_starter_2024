@@ -29,18 +29,4 @@ export class FilterService {
         });
     }
 
-    filterColumnHasValue<T>(array: Array<T>, key: keyof T): Array<T> {
-        return array.filter((item: T) => {
-            const value = item[key as keyof T];
-            return value != null
-        })
-    }
-
-    filterColumnHasNoValue<T>(array: Array<T>, key: keyof T): Array<T> {
-        return array.filter((item: T) => {
-            const value = item[key as keyof T];
-            return value == null
-        })
-    }
-
 }
