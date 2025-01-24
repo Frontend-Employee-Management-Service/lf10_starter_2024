@@ -12,22 +12,28 @@ export class QualificationFilterService extends FilterService {
     super();
   }
 
-  filterQualificationInUsed(employees: Employee[]): Qualification[] {
-    let qualifications: Qualification[] = [];
+  filterQualificationsInUsed(employees: Employee[]): Qualification[] {
+    let uniqueQualifications: Qualification[] = [];
+    const ids: number[] = [];
     employees.forEach(employee => {
-        qualifications = qualifications.concat(employee.qualifications ?? []);
+        let qualifications: Qualification[] = employee.qualifications ?? [];
+        qualifications.forEach(qualification => {
+          const id = qualification.id ?? -1;
+          if (id > 0 && !ids.includes(id)) {
+            ids.push(id);
+            uniqueQualifications.push(qualification);
+          }
+        })
       }
     );
-    return Array.from(
-      new Set(qualifications.map(item => JSON.stringify(item)))
-    ).map(item => JSON.parse(item));
+    return uniqueQualifications;
   }
 
-  filterQualificationByEmployeeName(employees: Employee[], name: string): Qualification[] {
+  filterQualificationsByEmployeeName(employees: Employee[], name: string): Qualification[] {
     let matchingEmployees: Employee[] = [];
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "lastName", name));
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "firstName", name));
-    return this.filterQualificationInUsed(matchingEmployees);
+    return this.filterQualificationsInUsed(matchingEmployees);
   }
 
 }
