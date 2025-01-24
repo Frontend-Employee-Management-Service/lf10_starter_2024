@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {catchError, Observable, take} from "rxjs";
+import {catchError, map, Observable, take} from "rxjs";
 import {Employee} from "../models/Employee";
 import {EmployeeCreateDto} from "../models/EmployeeCreateDto";
 import {AppGlobals} from "../app.globals";
@@ -18,6 +18,12 @@ export class EmployeeService {
   selectAll(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.url).pipe(
       take(1),
+      map((rawEmployees: any[]) =>
+        rawEmployees.map(raw => ({
+          ...raw,
+          qualifications: raw.skillSet
+        }))
+      ),
       catchError(error => {
           console.error(error);
           throw new Error(error);
@@ -29,6 +35,10 @@ export class EmployeeService {
     let getUrl = `${this.url}/${id}`;
     return this.http.get<Employee>(getUrl).pipe(
       take(1),
+      map((raw: any) => ({
+        ...raw,
+        qualifications: raw.skillSet
+      })),
       catchError(error => {
           console.error(error);
           throw new Error(error);
