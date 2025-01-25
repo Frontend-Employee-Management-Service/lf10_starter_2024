@@ -12,7 +12,7 @@ export class QualificationFilterService extends FilterService {
     super();
   }
 
-  filterQualificationsInUsed(employees: Employee[]): Qualification[] {
+  filterQualificationsInUse(employees: Employee[]): Qualification[] {
     let uniqueQualifications: Qualification[] = [];
     const ids: number[] = [];
     employees.forEach(employee => {
@@ -33,7 +33,7 @@ export class QualificationFilterService extends FilterService {
     let matchingEmployees: Employee[] = [];
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "lastName", name));
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "firstName", name));
-    return this.filterQualificationsInUsed(matchingEmployees);
+    return this.filterQualificationsInUse(matchingEmployees);
   }
 
 }
