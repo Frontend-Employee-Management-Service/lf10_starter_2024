@@ -1,13 +1,11 @@
 import { Routing } from "./routing";
 import { Label } from "./label";
-import { ICache } from "../../services/icache";
-import { Signal } from "@angular/core";
 import { SelectionBehaviour } from "./selection-behaviour";
+import { DataCache } from "../../services/data-cache";
 
 export class TableConfiguration<T extends {id? :number}> {
   constructor(
-    public data: Signal<T>,
-    private cachingService: ICache<T>,
+    private cachingService: DataCache<T>,
     public labels: Label<T>[],        // header order and naming
     public deleteActivated: boolean,
     public selection: SelectionBehaviour, 
@@ -22,7 +20,7 @@ export class TableConfiguration<T extends {id? :number}> {
     return this.routing.getRoutingLinkWithID(data.id);
   }
 
-  getCache(): ICache<T>{
+  getCache(): DataCache<T>{
     return this.cachingService;
   }
 }

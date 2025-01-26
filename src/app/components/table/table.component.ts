@@ -1,19 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, WritableSignal } from '@angular/core';
 import { TableConfiguration } from './table-configuration';
 import { RouterLink } from '@angular/router';
+import { LoadingComponent } from "../loading/loading.component";
 
 @Component({
   selector: 'app-table',
-  imports: [RouterLink],
+  imports: [RouterLink, LoadingComponent],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css'
 })
 export class TableComponent {
   @Input() configuration!: TableConfiguration<any>;
-
+  @Input() data!: WritableSignal<any[]>;
+  
   delete(id: number): void {
-    console.log(this.configuration.getCache().read()())
-    console.log("table component: " +id);
     this.configuration.getCache().delete(id);
   }
 

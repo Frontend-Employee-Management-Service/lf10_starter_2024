@@ -1,0 +1,23 @@
+.hover-effect:hover {
+  cursor: pointer;
+}
+
+.hover-effect_routable:hover {
+  cursor: pointer;
+  --bs-table-bg: var(--ci_color_light);
+}
+
+.table-head {
+  --bs-table-bg: var(--ci_color);
+  --bs-table-color:  white;
+  font-weight:bold;
+}
+
+.table_row {
+  font-weight: normal;
+  --bs-table-color: var(--ci_color_grey)
+}
+
+th {
+  font-weight: inherit;
+}
