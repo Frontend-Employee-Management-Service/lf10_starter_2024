@@ -5,3 +5,9 @@ Wenn Sie in der EmployeeListComponent.ts ein gültiges Bearer-Token eintragen, s
     {{ e.id }},{{ e.lastName }}, {{ e.firstName }}
   </li>
 </ul>
+<app-text-filter
+  [title]="'Employee'"
+  [value]="employeeName"
+  [action]="'filterEmployeeName'"
+  (eventTriggered)="handleEvent($event)"
+></app-text-filter>
