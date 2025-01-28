@@ -1,8 +1,9 @@
-<h2>{{ title }}</h2>
+<h3>{{ title }}</h3>
 <form>
   <input type="text"
          placeholder="keyword"
-         [value]="value"
+         [(ngModel)]="value"
+         [ngModelOptions]="{standalone: true}"
          (blur)="onInputEvent('blur')"
          (keyup.enter)="onInputEvent('enter')">
 </form>
