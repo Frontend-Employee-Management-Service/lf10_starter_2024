@@ -1,0 +1,68 @@
+<table class="table">
+  <thead >
+    <tr class="table-primary table-head">
+      @for(label of configuration.labels ; track $index){
+        <th scope="col">{{label.name}}</th>
+      }
+      @if(configuration.deleteActivated){
+        <th scope="col"></th>
+      }
+      @if(configuration.selection.activated){
+        <th scope="col"></th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for(row of data(); track row.id){
+        @if(configuration.routing.activated){
+          <tr class="table-secondary table-row table-row_routable" [routerLink]="[configuration.getRoutingLink(row.id)]" >
+            @for(label of configuration.labels ; track $index){
+              <th scope="row">{{row[label.key]}}</th>
+            }
+            @if(configuration.deleteActivated){
+              <th scope="row">
+              @if(configuration.getCache().isLoading().has(row.id)){
+                <app-loading class="garbage-can_size"></app-loading>
+              } @else {
+                <div class="hover-effect garbage-can_size" (click)="delete(row.id)">
+                  <svg viewBox="0 0 23 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.625 24.875C3.86875 24.875 3.22135 24.6057 2.68281 24.0672C2.14427 23.5286 1.875 22.8813 1.875 22.125V4.25H0.5V1.5H7.375V0.125H15.625V1.5H22.5V4.25H21.125V22.125C21.125 22.8813 20.8557 23.5286 20.3172 24.0672C19.7786 24.6057 19.1313 24.875 18.375 24.875H4.625ZM18.375 4.25H4.625V22.125H18.375V4.25ZM7.375 19.375H10.125V7H7.375V19.375ZM12.875 19.375H15.625V7H12.875V19.375Z" fill="#1D1B20"/>
+                  </svg>
+                </div>
+              } 
+              </th>
+            }
+            @if(configuration.selection.activated){
+              <th scope="row">
+                <input class="hover-effect" type="checkbox">
+              </th>
+            }
+          </tr>
+        } @else {
+          <tr class="table-row">
+            @for(label of configuration.labels ; track $index){
+              <th scope="row">{{row[label.key]}}</th>
+            }
+            @if(configuration.deleteActivated){
+              <th scope="row">
+              @if(configuration.getCache().isLoading().has(row.id)){
+                <app-loading class="garbage-can_size"></app-loading>
+              } @else {
+                <div class="hover-effect garbage-can_size" (click)="delete(row.id)">
+                  <svg viewBox="0 0 23 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.625 24.875C3.86875 24.875 3.22135 24.6057 2.68281 24.0672C2.14427 23.5286 1.875 22.8813 1.875 22.125V4.25H0.5V1.5H7.375V0.125H15.625V1.5H22.5V4.25H21.125V22.125C21.125 22.8813 20.8557 23.5286 20.3172 24.0672C19.7786 24.6057 19.1313 24.875 18.375 24.875H4.625ZM18.375 4.25H4.625V22.125H18.375V4.25ZM7.375 19.375H10.125V7H7.375V19.375ZM12.875 19.375H15.625V7H12.875V19.375Z" fill="#1D1B20"/>
+                  </svg>
+                </div>
+              } 
+              </th>
+            }
+            @if(configuration.selection.activated){
+              <th scope="row">
+                <input class="hover-effect" type="checkbox">
+              </th>
+            }
+          </tr>
+        }
+    }
+  </tbody>
+</table>

@@ -1,24 +1,26 @@
-import {Injectable, OnDestroy, signal, WritableSignal} from '@angular/core';
+import {Injectable, signal, WritableSignal} from '@angular/core';
 import {EmployeeService} from "./employee.service";
 import {Employee} from "../models/Employee";
-import {Observable, Subscription} from "rxjs";
+import {catchError, Observable, Subscription, take} from "rxjs";
+import { DataCache } from './data-cache';
 
 @Injectable({
   providedIn: 'root'
 })
-export class EmployeesCacheService implements OnDestroy {
-  private cache: WritableSignal<Employee[]> = signal<Employee[]>([]);
-  private subscriptions: Subscription[] = [];
-
+export class EmployeesCacheService extends DataCache<Employee> {
+  private static cache: WritableSignal<Employee[]> = signal<Employee[]>([]);
+  private static selected: Map<string, Employee[]> = new Map<string, Employee[]>();
+  
   constructor(private employeeService: EmployeeService) {
+    super();
   }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+  
+  public override getSelectedData(): Map<string, Employee[]> {
+    return EmployeesCacheService.selected;
   }
 
   read(): WritableSignal<Employee[]> {
-    return this.cache;
+    return EmployeesCacheService.cache;
   }
 
   refresh() {
@@ -31,11 +33,11 @@ export class EmployeesCacheService implements OnDestroy {
       }
     );
     this.subscriptions.push(subscription);
-    this.cache.set(data);
+    EmployeesCacheService.cache.set(data);
   }
 
   select(id: number): Employee | undefined {
-    const data: Employee[] = this.cache();
+    const data: Employee[] = EmployeesCacheService.cache();
     return data.find((employee: Employee) => employee.id === id);
   }
 
@@ -43,7 +45,7 @@ export class EmployeesCacheService implements OnDestroy {
     const result$: Observable<Employee> = this.employeeService.insert(employee);
     const subscription: Subscription = result$.subscribe(
       (newEmployee: Employee) => {
-        this.cache.update(data => {
+        EmployeesCacheService.cache.update(data => {
           data.push(newEmployee);
           return data;
         })
@@ -56,7 +58,7 @@ export class EmployeesCacheService implements OnDestroy {
     const result$: Observable<Employee> = this.employeeService.update(employee);
     const subscription: Subscription = result$.subscribe(
       (updatedEmployee: Employee) => {
-        this.cache.update(data => {
+        EmployeesCacheService.cache.update(data => {
           data = data.filter(item => item.id !== employee.id);
           data.push(updatedEmployee);
           return data;
@@ -66,9 +68,31 @@ export class EmployeesCacheService implements OnDestroy {
     this.subscriptions.push(subscription);
   }
 
-  delete(id: number) {
-    const subscription: Subscription = this.employeeService.delete(id).subscribe();
-    this.cache.update(employees => employees.filter(employee => employee.id !== id));
+  delete(id: number): void {
+    this.isLoading.update(loadingIDs => loadingIDs.add(id)); 
+    console.log(this.isLoading())
+    const subscription: Subscription = this.employeeService.delete(id)
+    .pipe(
+      take(1),
+      catchError(error=>{
+        this.isLoading.update(loadingIDs => {
+          loadingIDs.delete(id);
+          return loadingIDs;
+        }) 
+        throw new Error(error);
+      } 
+      ))
+    .subscribe(
+      {
+        complete: () =>  {
+          this.isLoading.update(loadingIDs => {
+            EmployeesCacheService.cache.update(values => values.filter(entry => entry.id !== id))
+            loadingIDs.delete(id);
+            return loadingIDs;
+          })
+        }
+      }
+    );    
     this.subscriptions.push(subscription);
   }
 }
