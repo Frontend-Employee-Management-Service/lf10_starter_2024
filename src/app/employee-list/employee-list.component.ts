@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Employee} from "../models/Employee";
 import {EmployeeService} from "../services/employee.service";
 import {EmployeesCacheService} from "../services/employees-cache.service";
+import {FilterService} from "../services/filter.service";
 
 @Component({
     selector: 'app-employee-list',
@@ -15,7 +16,8 @@ export class EmployeeListComponent {
   employees: WritableSignal<Employee[]> = signal([]);
   employee?: Employee;
 
-  constructor(private http: HttpClient, private service: EmployeeService, private employeeCache: EmployeesCacheService) {
+  constructor(private http: HttpClient, private service: EmployeeService,
+              private employeeCache: EmployeesCacheService) {
     employeeCache.refresh();
     this.employees = this.employeeCache.read();
   }
