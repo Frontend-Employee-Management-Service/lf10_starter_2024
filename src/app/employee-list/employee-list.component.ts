@@ -16,13 +16,14 @@ export class EmployeeListComponent {
   employees: WritableSignal<Employee[]> = signal([]);
   employee?: Employee;
   employeeName: string = '';
+  keywords: Map<string, string> = new Map<string, string>();
 
   constructor(private http: HttpClient, private service: EmployeeService, private employeeCache: EmployeesCacheService) {
     employeeCache.refresh();
     this.employees = this.employeeCache.read();
   }
 
-  handleEvent(event: TextFilterComponent) {
+  handleEvent(event: { action: string; value: string; event: string }) {
     if (!event) return;
     if (event.action === 'filterEmployeeName') {
       this.filterEmployeeName(event.value);
@@ -30,12 +31,28 @@ export class EmployeeListComponent {
   }
 
   private filterEmployeeName(value: string) {
-    //save employee name filter's keyword
-
+    if (value == null || value == "") {
+      this.keywords.delete("name")
+      return;
+    }
+    this.keywords.set("name", value);
+    this.doFilter();
   }
 
-  private doFilter(){
+  private doFilter() {
+    if (this.keywords.has("name")) {
+      const key = this.keywords.get("name");
+      console.log(key);
+    }
     //get all keywords from other filter. //Map?
     //call filter service for the combined filter
   }
+
+  /*
+  private initializeKeywords(){
+    this.keywords  = new Map<string,string>();
+    this.keywords.set("name","");
+    this.keywords.set("qualification","");
+    this.keywords.set("all","");
+  }*/
 }
