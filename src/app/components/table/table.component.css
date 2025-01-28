@@ -13,7 +13,7 @@
   font-weight:bold;
 }
 
-.table_row {
+.table-row {
   font-weight: normal;
   --bs-table-color: var(--ci_color_grey)
 }
