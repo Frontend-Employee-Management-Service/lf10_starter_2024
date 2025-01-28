@@ -1,1 +1,22 @@
-<p>employee works!</p>
+<div>
+  <h1>Employee Form Page</h1>
+
+  <!-- Pass data to child and listen for changes -->
+  <app-employee-form
+    [firstname]="employeeData.firstname"
+    [lastname]="employeeData.lastname"
+    [city]="employeeData.city"
+    [postcode]="employeeData.postcode"
+    [phone]="employeeData.phone"
+    (formDataChange)="updateEmployeeData($event)"
+  ></app-employee-form>
+
+  <!-- Submit button -->
+  <button (click)="submitDataToBackend()">Submit Data</button>
+
+  <!-- Display captured data -->
+  <div *ngIf="employeeData">
+    <h3>Captured Employee Data:</h3>
+    <pre>{{ employeeData}}</pre>
+  </div>
+</div>
