@@ -59,13 +59,7 @@ export class EmployeeService {
 
   delete(id: number): Observable<Employee> {
     const deleteUrl = `${this.url}/${id}`;
-    return this.http.delete(deleteUrl).pipe(
-      take(1),
-      catchError(error => {
-          console.error(error);
-          throw new Error(error);
-        }
-      ));
+    return this.http.delete(deleteUrl);
   }
 
 }

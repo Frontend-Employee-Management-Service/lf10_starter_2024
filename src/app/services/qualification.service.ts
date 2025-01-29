@@ -13,6 +13,8 @@ export class QualificationService {
   constructor(private httpClient: HttpClient) { }
 
   select(id: number): Observable<Qualification> {
+    let q: Qualification = new Qualification();
+
     const url = AppGlobals.EMPLOYEES_MANAGER_BASE_URL + this.urlSnippet + `/${id}`;;
     return this.httpClient.get<Qualification>(url).pipe(
       take(1),
@@ -60,12 +62,6 @@ export class QualificationService {
 
   delete(id: number): Observable<any> {
     const url: string = AppGlobals.EMPLOYEES_MANAGER_BASE_URL + this.urlSnippet + `/${id}`;
-    return this.httpClient.delete<any>(url).pipe(
-      take(1),
-      catchError(error => {
-        console.error(error);
-        throw new Error(error);
-      })
-    );
+    return this.httpClient.delete<any>(url);
   }
 }
