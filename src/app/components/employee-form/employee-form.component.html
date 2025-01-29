@@ -4,7 +4,7 @@
     <div class="row align-items-center mb-3 ms-4">
       <label class="col-sm-3 col-form-label col-md-1 label">First Name</label>
       <div class="col-sm-2">
-        <input class="form-control input" [(ngModel)]="employee.firstName" (ngModelChange)="updateFormData()" name="firstname" type="text" placeholder="firstname">
+        <input class="form-control input" [(ngModel)]="firstname" (ngModelChange)="updateFormData()" name="firstname" type="text" placeholder="firstname">
       </div>
     </div>
 
@@ -12,7 +12,7 @@
     <div class="row align-items-center mb-3 ms-4">
       <label class="col-sm-3 col-form-label col-md-1 label">Surname</label>
       <div class="col-sm-2">
-        <input class="form-control input" [(ngModel)]="employee.lastName" name="lastname"  (ngModelChange)="updateFormData()" type="text"  placeholder="surname">
+        <input class="form-control input" [(ngModel)]="lastname" name="lastname"  (ngModelChange)="updateFormData()" type="text"  placeholder="surname">
       </div>
     </div>
 
@@ -21,7 +21,7 @@
     <div class="row align-items-center mb-3 ms-4">
       <label class="col-sm-3 col-form-label col-md-1 label">City</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.city" name="city" (ngModelChange)="updateFormData()" type="text" class="form-control input"  placeholder="city">
+        <input [(ngModel)]="city" name="city" (ngModelChange)="updateFormData()" type="text" class="form-control input"  placeholder="city">
       </div>
     </div>
 
@@ -29,7 +29,7 @@
     <div class="row align-items-center mb-3 ms-4">
       <label class="col-sm-3 col-form-label col-md-1 label">Postcode</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.postcode" name="postcode" (ngModelChange)="updateFormData()"  type="text" class="form-control input" placeholder="postcode">
+        <input [(ngModel)]="postcode" name="postcode" (ngModelChange)="updateFormData()"  type="text" class="form-control input" placeholder="postcode">
       </div>
     </div>
 
@@ -37,7 +37,7 @@
     <div class="row align-items-center mb-3 ms-4">
       <label class="col-sm-3 col-form-label col-md-1 label">Phone</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.phone" (ngModelChange)="updateFormData()" name ="phone" type="text" class="form-control input" placeholder="phone">
+        <input [(ngModel)]="phone" (ngModelChange)="updateFormData()" name ="phone" type="text" class="form-control input" placeholder="phone">
       </div>
     </div>
   </div>

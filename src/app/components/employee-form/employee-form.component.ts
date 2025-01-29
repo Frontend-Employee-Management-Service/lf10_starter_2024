@@ -1,6 +1,5 @@
-import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
+import {Component, Output, EventEmitter, Input} from '@angular/core';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Employee} from "../../models/Employee";
 
 @Component({
   selector: 'app-employee-form',
@@ -10,19 +9,30 @@ import {Employee} from "../../models/Employee";
   styleUrl: './employee-form.component.css'
 })
 
-export class EmployeeFormComponent implements OnInit{
-  @Input() employee!: Employee;
-  @Output() formDataChange = new EventEmitter<Employee>();
+export class EmployeeFormComponent {
+  @Input() firstname: string = '';
+  @Input() lastname: string = '';
+  @Input() city: string = '';
+  @Input() postcode: string = '';
+  @Input() phone: string = '';
 
-  ngOnInit(): void {
-    // Ensure employee is always initialized
-    if (!this.employee) {
-      this.employee = new Employee(undefined, '', '', '', '', '', '', []);
-    }
-  }
+
+  @Output() formDataChange = new EventEmitter<{
+    firstname: string;
+    lastname: string;
+    city: string;
+    postcode: string;
+    phone: string;
+  }>();
 
   updateFormData() {
-    this.formDataChange.emit(this.employee);
+    this.formDataChange.emit({
+      firstname: this.firstname,
+      lastname: this.lastname,
+      city: this.city,
+      postcode: this.postcode,
+      phone: this.phone,
+    });
   }
 
 
