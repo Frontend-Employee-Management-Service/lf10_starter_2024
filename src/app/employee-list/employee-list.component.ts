@@ -61,7 +61,7 @@ export class EmployeeListComponent {
       this.listedEmployees.set(qualificationFilterResult);
     }
     if (this.keywords.has("all")) {
-      const allColumnsFilterResult = this.filterService.filterAll(this.listedEmployees(), this.keywords.get("all")!);
+      const allColumnsFilterResult = this.filterService.filterAllEmployeeFields(this.listedEmployees(), this.keywords.get("all")!);
       this.listedEmployees.set(allColumnsFilterResult);
     }
   }

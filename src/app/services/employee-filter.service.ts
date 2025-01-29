@@ -30,4 +30,13 @@ export class EmployeeFilterService extends FilterService {
     return matchingEmployees;
   }
 
+  filterAllEmployeeFields(employees: Employee[], keyword: string): Employee[] {
+    let matchingEmployees: Employee[] = this.filterAll(employees, keyword);
+    matchingEmployees = matchingEmployees.concat(
+      this.filterEmployeesByQualification(employees, keyword)
+        .filter(entry => !matchingEmployees.some(preExistingEntry => preExistingEntry.id === entry.id))
+    );
+    return matchingEmployees;
+  }
+
 }
