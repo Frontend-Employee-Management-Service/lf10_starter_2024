@@ -2,6 +2,8 @@ import {Injectable, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {EmployeeService} from "./employee.service";
 import {Employee} from "../models/Employee";
 import {Observable, Subscription} from "rxjs";
+import {Qualification} from "../models/Qualification";
+import {EmployeeCreateDto} from "../models/EmployeeCreateDto";
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +42,12 @@ export class EmployeesCacheService implements OnDestroy {
   }
 
   insert(employee: Employee) {
-    const result$: Observable<Employee> = this.employeeService.insert(employee);
+    const dto = new EmployeeCreateDto(employee.lastName, employee.firstName, employee.street,
+      employee.postcode, employee.city, employee.phone);
+    if (employee.qualifications){
+      dto.skillSet = employee.qualifications.map((qualification: Qualification) => qualification.id);
+    }
+    const result$: Observable<Employee> = this.employeeService.insert(dto);
     const subscription: Subscription = result$.subscribe(
       (newEmployee: Employee) => {
         this.cache.update(data => {
@@ -72,3 +79,6 @@ export class EmployeesCacheService implements OnDestroy {
     this.subscriptions.push(subscription);
   }
 }
+
+
+

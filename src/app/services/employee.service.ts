@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {catchError, Observable, take} from "rxjs";
+import {catchError, map, Observable, take} from "rxjs";
 import {Employee} from "../models/Employee";
 import {EmployeeCreateDto} from "../models/EmployeeCreateDto";
 import {AppGlobals} from "../app.globals";
@@ -37,7 +37,7 @@ export class EmployeeService {
   }
 
   insert(employee: EmployeeCreateDto): Observable<Employee> {
-    return this.http.post<Employee>(this.url, employee).pipe(
+    return this.http.post<EmployeeCreateDto>(this.url, employee).pipe(
       take(1),
       catchError(error => {
           console.error(error);

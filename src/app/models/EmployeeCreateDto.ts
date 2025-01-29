@@ -1,3 +1,5 @@
+import {Qualification} from "./Qualification";
+
 export class EmployeeCreateDto {
     constructor(
         public lastName?: string,
@@ -5,6 +7,7 @@ export class EmployeeCreateDto {
         public street?: string,
         public postcode?: string,
         public city?: string,
-        public phone?: string) {
+        public phone?: string,
+        public skillSet?:(number | undefined)[]) {
     }
 }
