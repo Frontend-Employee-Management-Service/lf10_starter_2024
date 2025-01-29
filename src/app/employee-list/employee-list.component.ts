@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Employee} from "../models/Employee";
 import {EmployeeService} from "../services/employee.service";
 import {EmployeesCacheService} from "../services/employees-cache.service";
-import {TextFilterComponent} from "../text-filter/text-filter.component";
+import {TextFilterComponent} from "../components/text-filter/text-filter.component";
 import {EmployeeFilterService} from "../services/employee-filter.service";
 
 @Component({
@@ -14,65 +14,56 @@ import {EmployeeFilterService} from "../services/employee-filter.service";
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent {
-  employees: WritableSignal<Employee[]> = signal([]);
+  listedEmployees: WritableSignal<Employee[]> = signal([]);
+  allEmployees: WritableSignal<Employee[]> = signal([]);
   private keywords: Map<string, string> = new Map<string, string>();
 
   constructor(private http: HttpClient, private service: EmployeeService,
               private employeeCache: EmployeesCacheService,
               private filterService: EmployeeFilterService) {
     employeeCache.refresh();
-    this.employees = this.employeeCache.read();
+    this.allEmployees.set(this.employeeCache.read()());
+    this.listedEmployees.set(this.employeeCache.read()());
   }
 
-  handleEventFilterByName(event: { value: string; event: string }) {
-    if (!event) return;
+  handleEventFilterByName(event: { value: string }) {
     this.setFilterKeyword('name', event.value);
-  }
-
-  handleEventFilterByQualification(event: { value: string; event: string }) {
-    if (!event) return;
-    this.setFilterKeyword('qualification', event.value);
-  }
-
-  handleEventFilterAll(event: { value: string; event: string }) {
-    if (!event) return;
-    this.setFilterKeyword('all', event.value);
-  }
-
-  private setFilterKeyword(key: string, value: string){
-    if (value == null || value == "") {
-      this.keywords.delete(key)
-      this.employeeCache.refresh();
-      this.employees = this.employeeCache.read();
-    } else {
-      this.keywords.set(key, value);
-    }
     this.doFilter();
   }
 
-  private doFilter() {
-    //TODO replace console.log with filterService
-    console.log('doFilter()');
+  handleEventFilterByQualification(event: { value: string }) {
+    this.setFilterKeyword('qualification', event.value);
+    this.doFilter();
+  }
 
-    if (this.keywords.has("name")) {
-      const key = this.keywords.get("name");
-      console.log(key);
-      const nameFilterResult = this.filterService.filterEmployeesByNames(this.employees(), this.keywords.get("name")!);
-      this.employees.set(nameFilterResult);
-    }
-    if (this.keywords.has("qualification")) {
-      const key = this.keywords.get("qualification");
-      console.log(key);
-      const qualificationFilterResult = this.filterService.filterEmployeesByQualification(this.employees(), this.keywords.get("qualification")!);
-      this.employees.set(qualificationFilterResult);
-    }
-    if (this.keywords.has("all")) {
-      const key = this.keywords.get("all");
-      console.log(key);
-      const allColumnsFilterResult = this.filterService.filterAll(this.employees(), this.keywords.get("all")!);
-      this.employees.set(allColumnsFilterResult);
+  handleEventFilterAll(event: { value: string }) {
+    this.setFilterKeyword('all', event.value);
+    this.doFilter();
+  }
+
+  setFilterKeyword(key: string, value: string) {
+    if (value == null || value == "") {
+      this.keywords.delete(key)
+      this.listedEmployees.set(this.allEmployees());
+    } else {
+      this.keywords.set(key, value);
     }
   }
 
+  private doFilter() {
+    console.log('doFilter()');
+    if (this.keywords.has("name")) {
+      const nameFilterResult = this.filterService.filterEmployeesByNames(this.listedEmployees(), this.keywords.get("name")!);
+      this.listedEmployees.set(nameFilterResult);
+    }
+    if (this.keywords.has("qualification")) {
+      const qualificationFilterResult = this.filterService.filterEmployeesByQualification(this.listedEmployees(), this.keywords.get("qualification")!);
+      this.listedEmployees.set(qualificationFilterResult);
+    }
+    if (this.keywords.has("all")) {
+      const allColumnsFilterResult = this.filterService.filterAll(this.listedEmployees(), this.keywords.get("all")!);
+      this.listedEmployees.set(allColumnsFilterResult);
+    }
+  }
 
 }

@@ -13,13 +13,11 @@ import {FormsModule} from "@angular/forms";
 export class TextFilterComponent {
   @Input() title: string = '';
   value: string = '';
-  @Output() eventTriggered = new EventEmitter<{ value: string; event: string }>();
+  @Output() eventTriggered = new EventEmitter<{ value: string; }>();
 
-  onInputEvent(eventType: string) {
-    console.log(`${eventType},${this.value}`);
+  onInputEvent() {
     const result = {
-      value: this.value,
-      event: eventType,
+      value: this.value
     };
     this.eventTriggered.emit(result);
   }
