@@ -8,18 +8,16 @@ import {FormsModule} from "@angular/forms";
   ],
   templateUrl: './text-filter.component.html',
   styleUrl: './text-filter.component.css',
-  standalone:true
+  standalone: true
 })
 export class TextFilterComponent {
   @Input() title: string = '';
   value: string = '';
-  @Input() action: string = '';
-  @Output() eventTriggered = new EventEmitter<{ action: string; value: string; event: string }>();
+  @Output() eventTriggered = new EventEmitter<{ value: string; event: string }>();
 
   onInputEvent(eventType: string) {
     console.log(`${eventType},${this.value}`);
     const result = {
-      action: this.action,
       value: this.value,
       event: eventType,
     };

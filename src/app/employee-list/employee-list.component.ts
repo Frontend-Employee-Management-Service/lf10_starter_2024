@@ -25,16 +25,19 @@ export class EmployeeListComponent {
     this.employees = this.employeeCache.read();
   }
 
-  //TODO split this method into 3 method so that no 'action' is needed
-  handleEvent(event: { action: string; value: string; event: string }) {
+  handleEventFilterByName(event: { value: string; event: string }) {
     if (!event) return;
-    if (event.action === 'filterByEmployeeName') {
-      this.setFilterKeyword('name', event.value);
-    } else if (event.action === 'filterByQualification') {
-      this.setFilterKeyword('qualification', event.value);
-    } else if (event.action === 'filterAll') {
-      this.setFilterKeyword('all', event.value);
-    }
+    this.setFilterKeyword('name', event.value);
+  }
+
+  handleEventFilterByQualification(event: { value: string; event: string }) {
+    if (!event) return;
+    this.setFilterKeyword('qualification', event.value);
+  }
+
+  handleEventFillterAll(event: { value: string; event: string }) {
+    if (!event) return;
+    this.setFilterKeyword('all', event.value);
   }
 
   private setFilterKeyword(key: string, value: string) {
@@ -53,12 +56,12 @@ export class EmployeeListComponent {
     if (this.keywords.has("name")) {
       const key = this.keywords.get("name");
       console.log(key);
-      let nameFilterResult = this.filterService.filterEmployeesByNames(employees,key!);
+      let nameFilterResult = this.filterService.filterEmployeesByNames(employees, key!);
     }
     if (this.keywords.has("qualification")) {
       const key = this.keywords.get("qualification");
       console.log(key);
-      let qualificationFilterResult =  this.filterService.filterEmployeesByQualification(employees,key!);
+      let qualificationFilterResult = this.filterService.filterEmployeesByQualification(employees, key!);
     }
     if (this.keywords.has("all")) {
       const key = this.keywords.get("all");
@@ -66,5 +69,6 @@ export class EmployeeListComponent {
     }
     //TODO call combineFilterResults from filter service
   }
+
 
 }
