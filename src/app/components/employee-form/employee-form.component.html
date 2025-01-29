@@ -1,0 +1,46 @@
+<form>
+  <div class="form-group">
+    <!-- First Name -->
+    <div class="row align-items-center mb-3 ms-4">
+      <label class="col-sm-3 col-form-label col-md-1 label">First Name</label>
+      <div class="col-sm-2">
+        <input class="form-control input" [(ngModel)]="firstname" (ngModelChange)="updateFormData()" name="firstname" type="text" placeholder="firstname">
+      </div>
+    </div>
+
+    <!-- Surname -->
+    <div class="row align-items-center mb-3 ms-4">
+      <label class="col-sm-3 col-form-label col-md-1 label">Surname</label>
+      <div class="col-sm-2">
+        <input class="form-control input" [(ngModel)]="lastname" name="lastname"  (ngModelChange)="updateFormData()" type="text"  placeholder="surname">
+      </div>
+    </div>
+
+
+    <!-- City -->
+    <div class="row align-items-center mb-3 ms-4">
+      <label class="col-sm-3 col-form-label col-md-1 label">City</label>
+      <div class="col-sm-2">
+        <input [(ngModel)]="city" name="city" (ngModelChange)="updateFormData()" type="text" class="form-control input"  placeholder="city">
+      </div>
+    </div>
+
+    <!-- Postcode -->
+    <div class="row align-items-center mb-3 ms-4">
+      <label class="col-sm-3 col-form-label col-md-1 label">Postcode</label>
+      <div class="col-sm-2">
+        <input [(ngModel)]="postcode" name="postcode" (ngModelChange)="updateFormData()"  type="text" class="form-control input" placeholder="postcode">
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="row align-items-center mb-3 ms-4">
+      <label class="col-sm-3 col-form-label col-md-1 label">Phone</label>
+      <div class="col-sm-2">
+        <input [(ngModel)]="phone" (ngModelChange)="updateFormData()" name ="phone" type="text" class="form-control input" placeholder="phone">
+      </div>
+    </div>
+  </div>
+
+
+</form>
