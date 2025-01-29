@@ -15,7 +15,6 @@ import {EmployeeFilterService} from "../services/employee-filter.service";
 })
 export class EmployeeListComponent {
   employees: WritableSignal<Employee[]> = signal([]);
-  employee?: Employee;
   private keywords: Map<string, string> = new Map<string, string>();
 
   constructor(private http: HttpClient, private service: EmployeeService,
@@ -35,39 +34,44 @@ export class EmployeeListComponent {
     this.setFilterKeyword('qualification', event.value);
   }
 
-  handleEventFillterAll(event: { value: string; event: string }) {
+  handleEventFilterAll(event: { value: string; event: string }) {
     if (!event) return;
     this.setFilterKeyword('all', event.value);
   }
 
-  private setFilterKeyword(key: string, value: string) {
+  private setFilterKeyword(key: string, value: string){
     if (value == null || value == "") {
       this.keywords.delete(key)
-      return;
+      this.employeeCache.refresh();
+      this.employees = this.employeeCache.read();
+    } else {
+      this.keywords.set(key, value);
     }
-    this.keywords.set(key, value);
     this.doFilter();
   }
 
   private doFilter() {
     //TODO replace console.log with filterService
-    const employees: Employee[] = this.employees();
     console.log('doFilter()');
+
     if (this.keywords.has("name")) {
       const key = this.keywords.get("name");
       console.log(key);
-      let nameFilterResult = this.filterService.filterEmployeesByNames(employees, key!);
+      const nameFilterResult = this.filterService.filterEmployeesByNames(this.employees(), this.keywords.get("name")!);
+      this.employees.set(nameFilterResult);
     }
     if (this.keywords.has("qualification")) {
       const key = this.keywords.get("qualification");
       console.log(key);
-      let qualificationFilterResult = this.filterService.filterEmployeesByQualification(employees, key!);
+      const qualificationFilterResult = this.filterService.filterEmployeesByQualification(this.employees(), this.keywords.get("qualification")!);
+      this.employees.set(qualificationFilterResult);
     }
     if (this.keywords.has("all")) {
       const key = this.keywords.get("all");
       console.log(key);
+      const allColumnsFilterResult = this.filterService.filterAll(this.employees(), this.keywords.get("all")!);
+      this.employees.set(allColumnsFilterResult);
     }
-    //TODO call combineFilterResults from filter service
   }
 
 
