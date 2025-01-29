@@ -15,8 +15,7 @@ import {TextFilterComponent} from "../text-filter/text-filter.component";
 export class EmployeeListComponent {
   employees: WritableSignal<Employee[]> = signal([]);
   employee?: Employee;
-  employeeName: string = '';
-  keywords: Map<string, string> = new Map<string, string>();
+  private keywords: Map<string, string> = new Map<string, string>();
 
   constructor(private http: HttpClient, private service: EmployeeService, private employeeCache: EmployeesCacheService) {
     employeeCache.refresh();
@@ -25,34 +24,39 @@ export class EmployeeListComponent {
 
   handleEvent(event: { action: string; value: string; event: string }) {
     if (!event) return;
-    if (event.action === 'filterEmployeeName') {
-      this.filterEmployeeName(event.value);
+    if (event.action === 'filterByEmployeeName') {
+      this.setFilterKeyword('name', event.value);
+    } else if (event.action === 'filterByQualification') {
+      this.setFilterKeyword('qualification', event.value);
+    } else if (event.action === 'filterAll') {
+      this.setFilterKeyword('all', event.value);
     }
   }
 
-  private filterEmployeeName(value: string) {
+  private setFilterKeyword(key: string, value: string) {
     if (value == null || value == "") {
-      this.keywords.delete("name")
+      this.keywords.delete(key)
       return;
     }
-    this.keywords.set("name", value);
+    this.keywords.set(key, value);
     this.doFilter();
   }
 
   private doFilter() {
+    //TODO replace console.log with filterService
+    console.log('doFilter()');
     if (this.keywords.has("name")) {
       const key = this.keywords.get("name");
       console.log(key);
     }
-    //get all keywords from other filter. //Map?
-    //call filter service for the combined filter
+    if (this.keywords.has("qualification")) {
+      const key = this.keywords.get("qualification");
+      console.log(key);
+    }
+    if (this.keywords.has("all")) {
+      const key = this.keywords.get("all");
+      console.log(key);
+    }
   }
 
-  /*
-  private initializeKeywords(){
-    this.keywords  = new Map<string,string>();
-    this.keywords.set("name","");
-    this.keywords.set("qualification","");
-    this.keywords.set("all","");
-  }*/
 }
