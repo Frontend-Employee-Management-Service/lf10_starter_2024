@@ -1,0 +1,11 @@
+.btn {
+  background-color: var(--ci_color);
+  color: white;
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.btn:focus {
+  background-color: #666666;
+  color: white;
+}
