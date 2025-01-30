@@ -18,6 +18,7 @@ export class EmployeeFormComponent implements OnInit{
     // Ensure employee is always initialized
     if (!this.employee) {
       this.employee = new Employee(undefined, '', '', '', '', '', '', []);
+      
     }
   }
 
