@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router, RouterLink} from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 
 enum Domain{
   employee = 'employee',
@@ -9,7 +9,7 @@ enum Domain{
 @Component({
   selector: 'app-navbar',
   imports: [
-    RouterLink
+     RouterLink, RouterLinkActive, RouterModule
   ],
   templateUrl: './navbar.component.html',
   standalone: true,
@@ -25,14 +25,8 @@ export class NavbarComponent{
     this.active = navbarItem;
   }
 
-  constructor(private router: Router) {
-
-  }
-
 
   redirectToQualification() {
   }
-
-
 
 }

@@ -1,9 +1,11 @@
 import {Routes} from '@angular/router';
-import {AppComponent} from "./app.component";
 import {AppAuthGuard} from "./app.authguard";
-import {EmployeeComponent} from "./employee/employee.component";
-import {QualificationComponent} from "./qualification/qualification.component";
+import { EmployeeListComponent } from './employee-list/employee-list.component';
+import { QualificationListComponent } from './qualification-list/qualification-list.component';
 
-export const routes: Routes = [ {path: '', component: AppComponent, canActivate: [AppAuthGuard]}
-, {path: 'employee', component: EmployeeComponent, canActivate: [AppAuthGuard]},
-  {path: 'qualification', component: QualificationComponent, canActivate: [AppAuthGuard]}];
+
+export const routes: Routes = [ 
+  {path: 'employees', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]}, 
+  {path: 'qualifications', title: "employees", component: QualificationListComponent, canActivate: [AppAuthGuard]},
+  { path: '', redirectTo: '/employees', pathMatch: 'full' },
+];

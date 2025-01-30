@@ -3,6 +3,7 @@ import {
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
+  UrlTree,
 } from '@angular/router';
 import { KeycloakService, KeycloakAuthGuard } from 'keycloak-angular';
 
@@ -10,21 +11,25 @@ import { KeycloakService, KeycloakAuthGuard } from 'keycloak-angular';
 export class AppAuthGuard extends KeycloakAuthGuard {
   constructor(
     router: Router,
-    keycloakAngular: KeycloakService
+    private keycloak: KeycloakService
   ) {
-    super(router, keycloakAngular);
+    super(router, keycloak);
   }
 
-  isAccessAllowed(
+  async isAccessAllowed(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      //let permission;
-      if (!this.authenticated) {
-        this.keycloakAngular.login().catch((e) => console.error(e));
-        return reject(false);
+    state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+    if (!this.authenticated) {
+      await this.keycloak.login({
+        redirectUri: window.location.origin + state.url,
+      });
+    } else {
+      try {
+        await this.keycloak.loadUserProfile(true);
+      } catch (e) {
+        console.error(e);
       }
-    });
+    }
+    return this.authenticated;
   }
 }
