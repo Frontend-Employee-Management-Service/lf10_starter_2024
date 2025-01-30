@@ -29,11 +29,37 @@ export class QualificationFilterService extends FilterService {
     return uniqueQualifications;
   }
 
+  filterQualificationsNotUsedByEmployees(allQualifications: Qualification[], employees: Employee[]): Qualification[] {
+    return allQualifications.filter(qualification => {
+      !this.filterQualificationsInUse(employees).some(inUseQualification =>
+        inUseQualification.id == qualification.id
+      );
+    });
+  }
+
   filterQualificationsByEmployeeName(employees: Employee[], name: string): Qualification[] {
     let matchingEmployees: Employee[] = [];
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "lastName", name));
     matchingEmployees = matchingEmployees.concat(this.filterColumn(employees, "firstName", name));
     return this.filterQualificationsInUse(matchingEmployees);
+  }
+
+  getIntersectionOfResultSets(result1: Qualification[], result2: Qualification[]) {
+    return result1.filter(qualification1 => {
+      result2.some(qualification2 => qualification1.id == qualification2.id)
+    });
+  }
+
+  filterByUsagesCheckboxes(allQualifications: Qualification[], allEmployees: Employee[], isInUse: boolean, isUnused: boolean): Qualification[] {
+    if (!isInUse && !isUnused) {
+      return [];
+    }
+    if (isInUse && !isUnused) {
+      return this.filterQualificationsInUse(allEmployees);
+    } else if (!isInUse && isUnused) {
+      return this.filterQualificationsNotUsedByEmployees(allQualifications, allEmployees);
+    }
+    return allQualifications;
   }
 
 }
