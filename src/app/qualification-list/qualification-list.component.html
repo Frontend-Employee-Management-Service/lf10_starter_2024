@@ -1,1 +1,20 @@
-<p>qualification-list works!</p>
+<div class="filter-checkbox-container">
+  <div class="filter-container">
+    <app-text-filter
+      [title]="'Employee'"
+      (eventTriggered)="handleEventFilterByEmployee($event)"
+    ></app-text-filter>
+    <app-text-filter
+      [title]="'Qualification'"
+      (eventTriggered)="handleEventFilterByQualification($event)"
+    ></app-text-filter>
+  </div>
+  <div class="checkbox-container">
+    <app-checkbox label="In use"
+                  defaultValue=true
+                  (eventTriggered)="handleEventInUseCheckbox($event)"></app-checkbox>
+    <app-checkbox label="Unused"
+                  defaultValue=true
+                  (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
+  </div>
+</div>
