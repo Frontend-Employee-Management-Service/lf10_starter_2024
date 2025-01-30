@@ -28,11 +28,8 @@ export class EmployeeComponent implements OnInit{
   submitDataToBackend() {
     console.log('Submitting to backend:', this.employee);
     this.employee.qualifications = [];
-    this.employee.street = '123 Main St';
-    this.employee.postcode = '12345';
     this.employeeCacheService.insert(this.employee);
     console.log(this.employeeCacheService.read()())
-    // Perform backend API call or other actions here
   }
 
   ngOnInit(): void {
