@@ -7,13 +7,19 @@ import {EmployeeService} from "../services/employee.service";
 import {EmployeesCacheService} from "../services/employees-cache.service";
 import {QualificationFilterService} from "../services/qualification-filter.service";
 import {Qualification} from "../models/Qualification";
+import {TableConfiguration} from "../components/table/table-configuration";
+import {Label} from "../components/table/label";
+import {SelectionBehaviour} from "../components/table/selection-behaviour";
+import {Routing} from "../components/table/routing";
+import {TableComponent} from "../components/table/table.component";
 
 @Component({
   selector: 'app-qualification-list',
   standalone: true,
   imports: [
     CheckboxComponent,
-    TextFilterComponent
+    TextFilterComponent,
+    TableComponent
   ],
   templateUrl: './qualification-list.component.html',
   styleUrl: './qualification-list.component.css'
@@ -26,6 +32,7 @@ export class QualificationListComponent {
   private inUseIsChecked: boolean = true; //By default, both checkboxes are checked (list all the entries)
   private unusedIsChecked: boolean = true;
   private keywords: Map<string, string> = new Map<string, string>();
+  tableConfiguration: TableConfiguration<Qualification>;
 
   constructor(private http: HttpClient,
               private service: EmployeeService,
@@ -36,6 +43,12 @@ export class QualificationListComponent {
     this.allEmployees.set(this.employeeCache.read()());
     qualificationCache.refresh();
     this.listedQualification.set(this.qualificationCache.read()());
+    //Table configuration
+    let labels: Label<Qualification >[] = []; //TODO
+    let select: SelectionBehaviour = new SelectionBehaviour(true, '');
+    let routing: Routing = new Routing(true,'');
+    this.tableConfiguration = new TableConfiguration(this.qualificationCache,
+      labels, true, select, routing);
   }
 
   handleEventInUseCheckbox(event: { check: boolean }) {
