@@ -1,9 +1,16 @@
 
 :root{
   --ci_color: #4C7DE7;
+  --ci_color_light: #E3ECFF;
+  --ci_color_grey: #667080;
 }
 
 .ci_font_color{
   color: var(--ci_color);
+}
+
+.garbage-can_size{
+  width: 20px;
+  height: 20px;
 }
 /* You can add global styles to this file, and also import other style files */
