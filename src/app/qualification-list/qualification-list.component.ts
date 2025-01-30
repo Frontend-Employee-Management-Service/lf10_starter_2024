@@ -72,21 +72,6 @@ export class QualificationListComponent {
     console.log("doFilter()");
     console.log('in use:' + this.inUseIsChecked);
     console.log('Unused:' + this.unusedIsChecked);
-    //TODO: checkbox filter in qualification service since this part is everywhere!
-    /*if (!this.inUseIsChecked && !this.unusedIsChecked) {
-      this.listedQualification.set([]);
-      return;
-    }
-    let checkboxFilterResult: Qualification[] = [];
-    if (this.inUseIsChecked && !this.unusedIsChecked) {
-      checkboxFilterResult = this.qualificationFilter.filterQualificationsInUse(this.employeeCache.read()());
-    }
-    else if (!this.inUseIsChecked && this.unusedIsChecked) {
-      checkboxFilterResult = this.qualificationFilter.filterQualificationsNotUsedByEmployees(this.qualificationCache.read()(), this.employeeCache.read()());
-    }
-    else{
-      checkboxFilterResult = this.qualificationCache.read()();
-    }*/
 
     let finalResult: Qualification[] = this.qualificationFilter
       .filterByUsagesCheckboxes(this.qualificationCache.read()(), this.employeeCache.read()(), this.inUseIsChecked, this.unusedIsChecked);
@@ -97,7 +82,6 @@ export class QualificationListComponent {
     }
     if (this.keywords.has("qualification")) {
       finalResult = this.qualificationFilter.filterColumn(finalResult, 'skill', this.keywords.get("qualification")!);
-      //finalResult = this.qualificationFilter.getIntersectionOfResultSets(finalResult, filterByQualificationsResult);
     }
     this.listedQualification.set(finalResult);
   }
