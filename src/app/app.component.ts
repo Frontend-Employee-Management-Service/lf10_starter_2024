@@ -5,10 +5,11 @@ import {EmployeeListComponent} from "./employee-list/employee-list.component";
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {EmployeeComponent} from "./employee/employee.component";
 import {EmployeeFormComponent} from "./components/employee-form/employee-form.component";
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
-  imports: [FormsModule,CommonModule, EmployeeListComponent, NavbarComponent, EmployeeComponent],
+  imports: [FormsModule, CommonModule, EmployeeListComponent, NavbarComponent, EmployeeComponent, RouterOutlet],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.css'
