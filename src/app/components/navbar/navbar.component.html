@@ -1,21 +1,19 @@
 <nav class="navbar navbar-expand-sm navbar-light bg-white" >
   <div class="container-fluid">
     <div class="collapse navbar-collapse">
-
       <ul class="navbar-nav me-auto" >
         <li class="nav-item active" id="employee">
           @if (active == domains.employee) {
-            <a class="nav-link nav-text navbar-brand mb-4 active-nav-text" href="
-            ">Employee </a>
+            <a class="nav-link nav-text navbar-brand mb-4 active-nav-text" routerLink="employees" routerLinkActive="active-nav-text" ariaCurrentWhenActive="page">Employee</a>
           } @else {
-            <a class="nav-link nav-text navbar-brand mb-4" href="" (click)="setActive(domains.employee)">Employee </a>
+            <a class="nav-link nav-text navbar-brand mb-4" routerLink="employees" routerLinkActive="active-nav-text" ariaCurrentWhenActive="page" (click)="setActive(domains.employee)">Employee</a>
           }
         </li>
         <li class="nav-item" id="qualification">
           @if (active == domains.qualification) {
-            <a class="nav-link nav-text navbar-brand mb-4 active-nav-text" >Qualification</a>
+            <a class="nav-link nav-text navbar-brand mb-4 active-nav-text" routerLink="qualifications" routerLinkActive="active-nav-text" ariaCurrentWhenActive="page">Qualification</a>
           } @else {
-            <a class="nav-link nav-text navbar-brand mb-4" href="" (click)="setActive(domains.qualification)">Qualification</a>
+            <a class="nav-link nav-text navbar-brand mb-4" href="" (click)="setActive(domains.qualification)" routerLink="qualifications" routerLinkActive="active-nav-text" ariaCurrentWhenActive="page">Qualification</a>
           }
         </li>
       </ul>
@@ -27,3 +25,4 @@
 </nav>
 
 <hr class="hr line_seperator">
+
