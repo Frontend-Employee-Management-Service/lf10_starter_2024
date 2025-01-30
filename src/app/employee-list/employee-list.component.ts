@@ -15,14 +15,12 @@ import {EmployeeFilterService} from "../services/employee-filter.service";
 })
 export class EmployeeListComponent {
   listedEmployees: WritableSignal<Employee[]> = signal([]);
-  allEmployees: WritableSignal<Employee[]> = signal([]);
   private keywords: Map<string, string> = new Map<string, string>();
 
   constructor(private http: HttpClient, private service: EmployeeService,
               private employeeCache: EmployeesCacheService,
               private filterService: EmployeeFilterService) {
     employeeCache.refresh();
-    this.allEmployees.set(this.employeeCache.read()());
     this.listedEmployees.set(this.employeeCache.read()());
   }
 
@@ -44,7 +42,7 @@ export class EmployeeListComponent {
   setFilterKeyword(key: string, value: string) {
     if (value == null || value == "") {
       this.keywords.delete(key)
-      this.listedEmployees.set(this.allEmployees());
+      this.listedEmployees.set(this.employeeCache.read()());
     } else {
       this.keywords.set(key, value);
     }
