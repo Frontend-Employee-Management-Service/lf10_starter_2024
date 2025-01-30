@@ -1,0 +1,9 @@
+<b>{{ title }}</b>
+<form>
+  <input type="text"
+         placeholder="keyword"
+         [(ngModel)]="value"
+         [ngModelOptions]="{standalone: true}"
+         (blur)="onInputEvent()"
+         (keyup.enter)="onInputEvent()">
+</form>
