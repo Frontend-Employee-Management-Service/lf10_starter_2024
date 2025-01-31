@@ -1,26 +1,6 @@
-<!--<div>-->
-<!--  <h1>Employee Form Page</h1>-->
-
-<!--  &lt;!&ndash; Pass data to child and listen for changes &ndash;&gt;-->
-<!--  <app-employee-form-->
-<!--    [employee]="employee"-->
-<!--    (formDataChange)="updateEmployeeData($event)"-->
-<!--  ></app-employee-form>-->
-
-<!--  <app-button (click)="submitDataToBackend()">Submit Data</app-button>-->
-
-
-
-
-<!--  <app-table [configuration]="configuration" [data]="qualifications" > </app-table>-->
-
-<!--  &lt;!&ndash; Submit button &ndash;&gt;-->
-
-<!--</div>-->
-
-
 <div class="container-fluid">
   <div class="row ">
+
     <div class="col-5">
       <h3 class="ps-5">New Employee</h3>
     </div>
@@ -28,18 +8,18 @@
       <h3 class="ps-5">Qualifications</h3>
     </div>
     <div class="col-1">
-      <app-button label="Add"(click)="submitDataToBackend()">Submit Data</app-button>
+      <app-button label="Add" (click)="submitDataToBackend()">Submit Data</app-button>
     </div>
     <div class="col-2">
-      <app-button label="New"(click)="submitDataToBackend()">Submit Data</app-button>
+      <app-button label="New" (click)="submitDataToBackend()">Submit Data</app-button>
     </div>
+
   </div>
   <div class="row">
     <div class="col ps-5 p-4">
     </div>
   </div>
   <div class = "row">
-
     <div class="col-md-5 ps-5 p-2">
       <div class=" ">
         <app-employee-form>
@@ -49,35 +29,16 @@
       </div>
     </div>
 
-
-
-
     <div class="col-md-6 p-2">
       <div class="">
         <app-table [configuration]="configuration" [data]="qualifications"></app-table>
       </div>
     </div>
-
-
-<!--    <div class="col-4">-->
-<!--      <app-employee-form-->
-<!--        [employee]="employee"-->
-<!--        (formDataChange)="updateEmployeeData($event)">-->
-<!--      </app-employee-form>-->
-<!--    </div>-->
-<!--    <div class="col-4">-->
-<!--      <app-table [configuration]="configuration" [data]="qualifications"  ></app-table>-->
-<!--    </div>-->
   </div >
 
-
-
-
-    <div class="position-relative bottom p-5">
+    <div class="d-flex justify-content-center gap-5 " style="position: fixed; bottom: 3%; left:50% ;transform: translateX(-50%);">
       <app-button label="Save" (click)="submitDataToBackend()">Submit Data</app-button>
+      <app-button label="Cancel" (click)="submitDataToBackend()">Submit Data</app-button>
     </div>
-
-
-
 
 </div>

@@ -23,7 +23,11 @@ import {Routing} from "../components/table/routing";
 export class EmployeeComponent implements OnInit{
   employee!: Employee;
   configuration!: TableConfiguration<Employee>;
-  qualifications: WritableSignal<Qualification[]> = signal([new Qualification(1, 'Java'), new Qualification(2, 'Python')]);
+  qualifications: WritableSignal<Qualification[]> = signal(
+    [new Qualification(1, 'Java'), new Qualification(2, 'Python'), new Qualification(3, 'C++'),
+      new Qualification(4, 'C#'), new Qualification(5, 'JavaScript'), new Qualification(6, 'TypeScript'),
+      new Qualification(7, 'HTML'), new Qualification(8, 'CSS'), new Qualification(9, 'SQL'),
+      ]);
 
 
 
