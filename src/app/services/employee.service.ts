@@ -4,7 +4,6 @@ import { catchError, map, Observable, take } from "rxjs";
 import { Employee } from "../models/Employee";
 import { EmployeeCreateDto } from "../models/EmployeeCreateDto";
 import { AppGlobals } from "../app.globals";
-import { EmployeePutDto } from '../models/EmployeePutDto';
 
 @Injectable({
   providedIn: 'root'
@@ -59,9 +58,9 @@ export class EmployeeService {
   }
 
   update(employee: Employee): Observable<Employee> {
-    const dto: EmployeePutDto = this.modelToPutDto(employee);
+    const dto: EmployeeCreateDto = this.modelToCreateDto(employee);
     let postUrl = `${this.url}/${employee.id}`;
-    return this.http.put<EmployeePutDto>(postUrl, dto).pipe(
+    return this.http.put<EmployeeCreateDto>(postUrl, dto).pipe(
       take(1),
       catchError(error => {
         console.error(error);
@@ -86,18 +85,5 @@ export class EmployeeService {
     );
     dto.skillSet = model.qualifications?.map<number | undefined>(entry => entry.id);
     return dto;
-  }
-
-  private modelToPutDto(model: Employee): EmployeePutDto {
-    return new EmployeePutDto(
-      model.id,
-      model.lastName,
-      model.firstName,
-      model.street,
-      model.postcode,
-      model.city,
-      model.phone,
-      model.qualifications
-    );
   }
 }
