@@ -31,7 +31,7 @@ export class QualificationFilterService extends FilterService {
 
   filterQualificationsNotUsedByEmployees(allQualifications: Qualification[], employees: Employee[]): Qualification[] {
     return allQualifications.filter(qualification => {
-      !this.filterQualificationsInUse(employees).some(inUseQualification =>
+      return !this.filterQualificationsInUse(employees).some(inUseQualification =>
         inUseQualification.id == qualification.id
       );
     });
@@ -45,9 +45,9 @@ export class QualificationFilterService extends FilterService {
   }
 
   getIntersectionOfResultSets(result1: Qualification[], result2: Qualification[]) {
-    return result1.filter(qualification1 => {
+    return result1.filter(qualification1 =>
       result2.some(qualification2 => qualification1.id == qualification2.id)
-    });
+    );
   }
 
   filterByUsagesCheckboxes(allQualifications: Qualification[], allEmployees: Employee[], isInUse: boolean, isUnused: boolean): Qualification[] {

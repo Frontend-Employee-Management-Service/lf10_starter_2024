@@ -12,6 +12,8 @@ import {Label} from "../components/table/label";
 import {SelectionBehaviour} from "../components/table/selection-behaviour";
 import {Routing} from "../components/table/routing";
 import {TableComponent} from "../components/table/table.component";
+import {ButtonComponent} from "../components/button/button.component";
+import {QualificationsCacheService} from "../services/qualifications-cache.service";
 
 @Component({
   selector: 'app-qualification-list',
@@ -19,7 +21,8 @@ import {TableComponent} from "../components/table/table.component";
   imports: [
     CheckboxComponent,
     TextFilterComponent,
-    TableComponent
+    TableComponent,
+    ButtonComponent
   ],
   templateUrl: './qualification-list.component.html',
   styleUrl: './qualification-list.component.css'
@@ -37,16 +40,19 @@ export class QualificationListComponent {
   constructor(private http: HttpClient,
               private service: EmployeeService,
               private employeeCache: EmployeesCacheService,
-              private qualificationCache: EmployeesCacheService,
+              private qualificationCache: QualificationsCacheService,
               private qualificationFilter: QualificationFilterService) {
     employeeCache.refresh();
     this.allEmployees.set(this.employeeCache.read()());
     qualificationCache.refresh();
     this.listedQualification.set(this.qualificationCache.read()());
     //Table configuration
-    let labels: Label<Qualification >[] = []; //TODO
-    let select: SelectionBehaviour = new SelectionBehaviour(true, '');
-    let routing: Routing = new Routing(true,'');
+    let labels: Label<Qualification >[] = [
+      new Label('id', 'id'),
+      new Label('skill', 'skill')
+    ]; //TODO
+    let select: SelectionBehaviour = new SelectionBehaviour(false, '');
+    let routing: Routing = new Routing(false,'');
     this.tableConfiguration = new TableConfiguration(this.qualificationCache,
       labels, true, select, routing);
   }
