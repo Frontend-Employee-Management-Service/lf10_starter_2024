@@ -1,0 +1,21 @@
+.filter-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding-left: 40px;
+  justify-content: flex-start;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  padding-left: 16px;
+}
+
+.filter-checkbox-container {
+  display: flex;          /* Aligns children (divs) in a row */
+  gap: 16px;              /* Adds space between filter and checkboxes */
+  align-items: center;    /* Aligns elements vertically */
+}
