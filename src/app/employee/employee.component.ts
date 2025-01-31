@@ -36,7 +36,7 @@ export class EmployeeComponent implements OnInit{
 
 
 
-  constructor(private employeeCacheService:EmployeesCacheService, private qualificationCacheService
+  constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
   :QualificationsCacheService) {
   }
 
