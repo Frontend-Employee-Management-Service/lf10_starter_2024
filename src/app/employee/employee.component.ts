@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, Input, OnInit, signal, WritableSignal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
 import {CommonModule} from "@angular/common";
@@ -21,6 +21,8 @@ import {Routing} from "../components/table/routing";
   styleUrl: './employee.component.css'
 })
 export class EmployeeComponent implements OnInit{
+  @Input() id!: number;
+
   employee!: Employee;
   configuration!: TableConfiguration<Employee>;
   qualifications: WritableSignal<Qualification[]> = signal(
@@ -47,13 +49,18 @@ export class EmployeeComponent implements OnInit{
   // Handle final form submission
   submitDataToBackend() {
     console.log('Submitting to backend:', this.employee);
-    this.employee.qualifications = [];
-    this.employeeCacheService.insert(this.employee);
+    if (this.employee){
+      this.employee.qualifications = [];
+      this.employeeCacheService.insert(this.employee);
+    }
     console.log(this.employeeCacheService.read()())
   }
 
   ngOnInit(): void {
     this.employee = new Employee();
+    if (this.id) {
+      this.employee = (this.employeeCacheService.select(this.id))!;
+    }
     this.employeeCacheService.refresh();
     const labels : Label <Qualification> [] = [
       new Label('id', 'ID'),

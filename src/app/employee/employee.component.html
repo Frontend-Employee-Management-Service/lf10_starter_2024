@@ -2,7 +2,12 @@
   <div class="row ">
 
     <div class="col-5">
-      <h3 class="ps-5">New Employee</h3>
+      @if (id) {
+        <h3 class="ps-5">Edit Employee</h3>
+        <p class="ps-5">ID: {{id}}</p>
+      }@else{
+        <h3 class="ps-5">New Employee</h3>
+      }
     </div>
     <div class="col">
       <h3 class="ps-5">Qualifications</h3>
@@ -22,9 +27,9 @@
   <div class = "row">
     <div class="col-md-5 ps-5 p-2">
       <div class=" ">
-        <app-employee-form>
-          [employee]="employee"
-          (formDataChange)="updateEmployeeData($event)">
+        <app-employee-form [employee]="employee"
+                           (formDataChange)="updateEmployeeData($event)">
+
         </app-employee-form>
       </div>
     </div>
