@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, inject, Input, OnInit, signal, WritableSignal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
 import {CommonModule} from "@angular/common";
@@ -12,6 +12,7 @@ import {SelectionBehaviour} from "../components/table/selection-behaviour";
 import {QualificationsCacheService} from "../services/qualifications-cache.service";
 import {Qualification} from "../models/Qualification";
 import {Routing} from "../components/table/routing";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-employee',
@@ -21,7 +22,9 @@ import {Routing} from "../components/table/routing";
   styleUrl: './employee.component.css'
 })
 export class EmployeeComponent implements OnInit{
-  @Input() id!: number;
+  private activatedRoute = inject(ActivatedRoute);
+  id!: number;
+
 
   employee!: Employee;
   configuration!: TableConfiguration<Employee>;
@@ -54,10 +57,12 @@ export class EmployeeComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.id = this.activatedRoute.snapshot.params['id'];
+
     this.employee = new Employee();
-    if (this.id) {
+    if (this.id!=null) {
       this.employeeCacheService.refresh();
-      this.employee = (this.employeeCacheService.select(this.id))!;
+      this.employee = this.employeeCacheService.select(this.id)!;
       console.log("employee:"+this.employee)
     }
     this.employeeCacheService.refresh();
