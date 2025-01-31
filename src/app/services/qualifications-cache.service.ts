@@ -38,7 +38,7 @@ export class QualificationsCacheService extends DataCache<Qualification> {
 
   select(id: number): Qualification | undefined {
     const data: Qualification[] = QualificationsCacheService.cache();
-    return data.find(entry => entry.id === id);
+    return data.find(entry => entry.id == id);
   }
 
   insert(qualification: Qualification): void {

@@ -38,7 +38,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
 
   select(id: number): Employee | undefined {
     const data: Employee[] = EmployeesCacheService.cache();
-    return data.find((employee: Employee) => employee.id === id);
+    return data.find((employee: Employee) => employee.id == id);
   }
 
   insert(employee: Employee) {

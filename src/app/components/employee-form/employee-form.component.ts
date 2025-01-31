@@ -1,5 +1,5 @@
 import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Employee} from "../../models/Employee";
 
 @Component({
