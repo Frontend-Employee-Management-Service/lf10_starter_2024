@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {catchError, map, Observable, take} from "rxjs";
-import {Employee} from "../models/Employee";
-import {EmployeeCreateDto} from "../models/EmployeeCreateDto";
-import {AppGlobals} from "../app.globals";
+import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { catchError, map, Observable, take } from "rxjs";
+import { Employee } from "../models/Employee";
+import { EmployeeCreateDto } from "../models/EmployeeCreateDto";
+import { AppGlobals } from "../app.globals";
+import { EmployeePutDto } from '../models/EmployeePutDto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,9 +26,9 @@ export class EmployeeService {
         }))
       ),
       catchError(error => {
-          console.error(error);
-          throw new Error(error);
-        }
+        console.error(error);
+        throw new Error(error);
+      }
       ));
   }
 
@@ -40,30 +41,32 @@ export class EmployeeService {
         qualifications: raw.skillSet
       })),
       catchError(error => {
-          console.error(error);
-          throw new Error(error);
-        }
+        console.error(error);
+        throw new Error(error);
+      }
       ));
   }
 
-  insert(employee: EmployeeCreateDto): Observable<Employee> {
-    return this.http.post<Employee>(this.url, employee).pipe(
+  insert(employee: Employee): Observable<Employee> {
+    const dto: EmployeeCreateDto = this.modelToCreateDto(employee);
+    return this.http.post<EmployeeCreateDto>(this.url, dto).pipe(
       take(1),
       catchError(error => {
-          console.error(error);
-          throw new Error(error);
-        }
+        console.error(error);
+        throw new Error(error);
+      }
       ));
   }
 
   update(employee: Employee): Observable<Employee> {
+    const dto: EmployeePutDto = this.modelToPutDto(employee);
     let postUrl = `${this.url}/${employee.id}`;
-    return this.http.put(postUrl, employee).pipe(
+    return this.http.put<EmployeePutDto>(postUrl, dto).pipe(
       take(1),
       catchError(error => {
-          console.error(error);
-          throw new Error(error);
-        }
+        console.error(error);
+        throw new Error(error);
+      }
       ));
   }
 
@@ -72,4 +75,29 @@ export class EmployeeService {
     return this.http.delete(deleteUrl);
   }
 
+  private modelToCreateDto(model: Employee): EmployeeCreateDto {
+    const dto: EmployeeCreateDto =  new EmployeeCreateDto(
+      model.lastName,
+      model.firstName,
+      model.street,
+      model.postcode,
+      model.city,
+      model.phone,
+    );
+    dto.skillSet = model.qualifications?.map<number | undefined>(entry => entry.id);
+    return dto;
+  }
+
+  private modelToPutDto(model: Employee): EmployeePutDto {
+    return new EmployeePutDto(
+      model.id,
+      model.lastName,
+      model.firstName,
+      model.street,
+      model.postcode,
+      model.city,
+      model.phone,
+      model.qualifications
+    );
+  }
 }
