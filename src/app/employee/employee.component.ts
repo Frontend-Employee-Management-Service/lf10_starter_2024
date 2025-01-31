@@ -35,10 +35,7 @@ export class EmployeeComponent implements OnInit{
 
   constructor(private employeeCacheService:EmployeesCacheService, private qualificationCacheService
   :QualificationsCacheService) {
-
-
   }
-
 
 
   // Handle updates from the child
@@ -59,7 +56,9 @@ export class EmployeeComponent implements OnInit{
   ngOnInit(): void {
     this.employee = new Employee();
     if (this.id) {
+      this.employeeCacheService.refresh();
       this.employee = (this.employeeCacheService.select(this.id))!;
+      console.log("employee:"+this.employee)
     }
     this.employeeCacheService.refresh();
     const labels : Label <Qualification> [] = [
