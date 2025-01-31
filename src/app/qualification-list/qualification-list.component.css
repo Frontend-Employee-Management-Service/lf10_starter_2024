@@ -1,21 +1,36 @@
-.filter-container {
+.tools-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+}
+
+.filters-container {
   display: flex;
   gap: 16px;
-  align-items: center;
-  padding-left: 40px;
-  justify-content: flex-start;
+}
+
+.text-filter-container {
+  display: flex;
+  gap: 16px;
 }
 
 .checkbox-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-items: flex-start;
-  padding-left: 16px;
 }
 
-.filter-checkbox-container {
-  display: flex;          /* Aligns children (divs) in a row */
-  gap: 16px;              /* Adds space between filter and checkboxes */
-  align-items: center;    /* Aligns elements vertically */
+.button-container {
+  display: flex;
+  gap: 16px;
 }
+
+
+.table-container {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
