@@ -94,10 +94,6 @@ export class QualificationListComponent {
 
   private doFilter(filtersKeywords: Map<string, string>, inUse: boolean, unused: boolean,
                    allQualifications: Qualification[], allEmployees : Employee[]) : Qualification[] {
-    console.log("doFilter()");
-    console.log('in use:' + this.inUseIsChecked);
-    console.log('Unused:' + this.unusedIsChecked);
-
     let finalResult: Qualification[] = this.qualificationFilter
       .filterByUsagesCheckboxes(allQualifications, allEmployees, inUse, unused);
 
