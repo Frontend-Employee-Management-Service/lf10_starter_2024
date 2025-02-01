@@ -58,7 +58,7 @@ export class QualificationListComponent {
       new Label('skill', 'skill')
     ];
     let selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(false, '');
-    let routing: Routing = new Routing(true, "qualification/edit/{id}");
+    let routing: Routing = new Routing(true, "/qualification/edit");
     this.tableConfiguration = new TableConfiguration(
       this.qualificationCache,
       labels, true, selectionBehaviour, routing);
