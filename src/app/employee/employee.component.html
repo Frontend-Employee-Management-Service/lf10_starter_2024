@@ -46,7 +46,7 @@
         @if (emp) {
           <app-table [configuration]="configuration" [data]="signal(emp.qualifications!)"></app-table>
         }@else{
-          <app-table [configuration]="configuration" [data]="signal([])"></app-table>
+          <app-table [configuration]="configuration" [data]="signal(qualifications)"></app-table>
         }
       </div>
     </div>
