@@ -1,5 +1,5 @@
-import {Component, inject} from '@angular/core';
-import {ActivatedRoute, RouterLink, RouterLinkActive, RouterModule} from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 
 enum Domain{
   employee = 'employee',
@@ -9,7 +9,7 @@ enum Domain{
 @Component({
   selector: 'app-navbar',
   imports: [
-     RouterLink, RouterLinkActive, RouterModule
+    RouterLink, RouterLinkActive, RouterModule
   ],
   templateUrl: './navbar.component.html',
   standalone: true,
@@ -17,8 +17,6 @@ enum Domain{
 })
 export class NavbarComponent{
   domains = Domain;
-  private activatedRoute = inject(ActivatedRoute);
-
 
   active:Domain = this.domains.employee;
   logoutIcon:String = 'assets/logout.png';

@@ -5,9 +5,9 @@ import { QualificationListComponent } from './qualification-list/qualification-l
 import {EmployeeComponent} from "./employee/employee.component";
 
 export const routes: Routes = [
-  {path: 'employee', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]},
-  {path: 'qualifications', title: "employees", component: QualificationListComponent, canActivate: [AppAuthGuard]},
-  {path: 'employee/new', title: "employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
-  {path: 'employee/edit/:id', title: "employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
-  { path: '', redirectTo: '/employee/', pathMatch: 'full' },
+  {path: 'employees', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]},
+  {path: 'qualifications', title: "qualifications", component: QualificationListComponent, canActivate: [AppAuthGuard]},
+  {path: 'employee/new', title: "newEmployee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
+  {path: 'employee/edit/:id', title: "editEmployee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
+  { path: '', redirectTo: '/employees', pathMatch: 'full' },
 ];

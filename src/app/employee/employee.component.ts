@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, Signal,computed, signal, WritableSignal} from '@angular/core';
+import {Component, inject, OnInit, Signal, computed, signal, WritableSignal, OnDestroy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
 import {CommonModule} from "@angular/common";
@@ -14,6 +14,7 @@ import {Qualification} from "../models/Qualification";
 import {Routing} from "../components/table/routing";
 import {ActivatedRoute} from "@angular/router";
 import {EmployeeService} from "../services/employee.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-employee',
@@ -22,16 +23,15 @@ import {EmployeeService} from "../services/employee.service";
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
-export class EmployeeComponent implements OnInit{
+export class EmployeeComponent implements OnInit, OnDestroy{
   private activatedRoute = inject(ActivatedRoute);
   id!: number;
+  private subscription!: Subscription;
 
   formDataEmployee: WritableSignal<Employee> = signal(new Employee());
 
   emp!: Employee;
-  employee!: Signal<Employee|undefined>;
   configuration!: TableConfiguration<Employee>;
-   qualifications!: Signal<Qualification[]>;
 
   constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
   :QualificationsCacheService, public employeeService: EmployeeService) {
@@ -45,49 +45,24 @@ export class EmployeeComponent implements OnInit{
 
   // Handle final form submission
   submitDataToBackend() {
-    console.log('Submitting to backend:', this.formDataEmployee());
     if (this.formDataEmployee()){
-
-      const payload =  this.formDataEmployee()!;
-      payload.qualifications = this.qualifications();
-      this.employeeCacheService.insert(payload);
+      this.employeeService.insert(this.emp);
     }
-    console.log(this.employeeCacheService.read()())
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.employeeService.select(this.id).subscribe((employee: Employee) => {
       this.emp = employee;
-      console.log("Employee loaded:", this.emp);
     });
 
-    //this.employee = new Employee();
-    // if (this.id!=null) {
-    //   this.employeeCacheService.refresh();
-    //   this.e = this.employeeCacheService.select(this.id)!;
-    //   console.log("Employee loaded:", this.e);
-    // }
     this.employeeCacheService.refresh();
-
-    this.employee = computed(()=> {
-      const employees = this.employeeCacheService.read()();
-      const emp = employees.find((employee: Employee) => employee.id == this.id)
-      console.log("Employee loaded:", emp);
-      return emp;
-    })
-
-    this.qualifications = computed(()=> {
-      this.employeeCacheService.read()();
-      const tempQualifications =  this.employee()?.qualifications;
-      console.log("Qualifications loaded:", this.employee());
-
-      if (tempQualifications){
-        return tempQualifications;
-      }
-      return [];
-    })
-
 
     const labels : Label <Qualification> [] = [
       new Label('id', 'ID'),
