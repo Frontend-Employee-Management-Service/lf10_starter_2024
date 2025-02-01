@@ -1,4 +1,4 @@
-import {Component, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Signal, signal, WritableSignal} from '@angular/core';
 import {CheckboxComponent} from "../components/checkbox/checkbox.component";
 import {TextFilterComponent} from "../components/text-filter/text-filter.component";
 import {Employee} from "../models/Employee";
@@ -29,12 +29,11 @@ import {QualificationsCacheService} from "../services/qualifications-cache.servi
 })
 export class QualificationListComponent {
   //Data
-  allEmployees: WritableSignal<Employee[]> = signal([]);
-  listedQualification: WritableSignal<Qualification[]> = signal([]);
+  listedQualifications: Signal<Qualification[]> = signal([]);
   //Filter
-  private inUseIsChecked: boolean = true; //By default, both checkboxes are checked (list all the entries)
-  private unusedIsChecked: boolean = true;
-  private keywords: Map<string, string> = new Map<string, string>();
+  private inUseIsChecked : WritableSignal<boolean> = signal(true); //By default, both checkboxes are checked (list all the entries)
+  private unusedIsChecked : WritableSignal<boolean> = signal(true);
+  private keywords : WritableSignal<Map<string, string>> = signal(new Map<string, string>());
   tableConfiguration: TableConfiguration<Qualification>;
 
   constructor(private http: HttpClient,
@@ -43,9 +42,14 @@ export class QualificationListComponent {
               private qualificationCache: QualificationsCacheService,
               private qualificationFilter: QualificationFilterService) {
     employeeCache.refresh();
-    this.allEmployees.set(this.employeeCache.read()());
     qualificationCache.refresh();
-    this.listedQualification.set(this.qualificationCache.read()());
+    this.listedQualifications = computed<Qualification[]>(() => {
+      const filtersKeywords = this.keywords();
+      const inUse = this.inUseIsChecked();
+      const unused = this.unusedIsChecked();
+      return this.doFilter(filtersKeywords, inUse, unused, this.qualificationCache.read()(), this.employeeCache.read()());
+    });
+
     //Table configuration
     let labels: Label<Qualification >[] = [
       new Label('id', 'id'),
@@ -58,51 +62,51 @@ export class QualificationListComponent {
   }
 
   handleEventInUseCheckbox(event: { check: boolean }) {
-    this.inUseIsChecked = event.check;
-    this.doFilter();
+    this.inUseIsChecked.set(event.check);
   }
 
   handleEventUnusedCheckbox(event: { check: boolean }) {
-    this.unusedIsChecked = event.check;
-    this.doFilter();
+    this.unusedIsChecked.set(event.check);
   }
 
   handleEventFilterByQualification(event: { value: string }) {
     this.setFilterKeyword('qualification', event.value);
-    this.doFilter();
   }
 
   handleEventFilterByEmployee(event: { value: string }) {
     this.setFilterKeyword('employee', event.value);
-    this.doFilter()
   }
 
   setFilterKeyword(key: string, value: string) {
+    const filterKeywords = this.keywords();
     if (value == null || value == "") {
-      this.keywords.delete(key)
-      this.allEmployees.set(this.employeeCache.read()());
-      this.listedQualification.set(this.qualificationCache.read()());
+      filterKeywords.delete(key)
     } else {
-      this.keywords.set(key, value);
+      filterKeywords.set(key, value);
     }
+    const newMap = new Map<string,string>();
+    filterKeywords.forEach((value, key) => { newMap.set(key, value); });
+    this.keywords.set(newMap);
   }
 
-  private doFilter() {
+  private doFilter(filtersKeywords: Map<string, string>, inUse: boolean, unused: boolean,
+                   allQualifications: Qualification[], allEmployees : Employee[]) : Qualification[] {
     console.log("doFilter()");
     console.log('in use:' + this.inUseIsChecked);
     console.log('Unused:' + this.unusedIsChecked);
 
     let finalResult: Qualification[] = this.qualificationFilter
-      .filterByUsagesCheckboxes(this.qualificationCache.read()(), this.employeeCache.read()(), this.inUseIsChecked, this.unusedIsChecked);
+      .filterByUsagesCheckboxes(allQualifications, allEmployees, inUse, unused);
 
-    if (this.keywords.has("employee")) {
-      const filterByEmployeesResult = this.qualificationFilter.filterQualificationsByEmployeeName(this.employeeCache.read()(), this.keywords.get("employee")!);
+    if (filtersKeywords.has("employee")) {
+      const filterByEmployeesResult = this.qualificationFilter
+        .filterQualificationsByEmployeeName(allEmployees, filtersKeywords.get("employee")!);
       finalResult = this.qualificationFilter.getIntersectionOfResultSets(finalResult, filterByEmployeesResult);
     }
-    if (this.keywords.has("qualification")) {
-      finalResult = this.qualificationFilter.filterColumn(finalResult, 'skill', this.keywords.get("qualification")!);
+    if (filtersKeywords.has("qualification")) {
+      finalResult = this.qualificationFilter.filterColumn(finalResult, 'skill', filtersKeywords.get("qualification")!);
     }
-    this.listedQualification.set(finalResult);
+    return finalResult;
   }
 
 }
