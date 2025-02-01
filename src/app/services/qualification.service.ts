@@ -15,7 +15,7 @@ export class QualificationService {
   select(id: number): Observable<Qualification> {
     let q: Qualification = new Qualification();
 
-    const url = AppGlobals.EMPLOYEES_MANAGER_BASE_URL + this.urlSnippet + `/${id}`;;
+    const url = AppGlobals.EMPLOYEES_MANAGER_BASE_URL + this.urlSnippet + `/${id}`;
     return this.httpClient.get<Qualification>(url).pipe(
       take(1),
       catchError((error) => {
