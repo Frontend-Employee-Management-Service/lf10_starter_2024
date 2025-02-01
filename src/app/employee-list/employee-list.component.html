@@ -1,21 +1,19 @@
-<div class="filter-container">
-  <app-text-filter
+<body class="page-wrapper">
+  <div class="filter-container">
+    <app-text-filter
     [title]="'Employee'"
     (eventTriggered)="handleEventFilterByName($event)"
-  ></app-text-filter>
-  <app-text-filter
+    ></app-text-filter>
+    <app-text-filter
     [title]="'Qualification'"
     (eventTriggered)="handleEventFilterByQualification($event)"
-  ></app-text-filter>
-  <app-text-filter
+    ></app-text-filter>
+    <app-text-filter
     [title]="'All'"
     (eventTriggered)="handleEventFilterAll($event)"
-  ></app-text-filter>
-</div>
-<h1 class="text-danger">LF10-Starter</h1>
-Wenn Sie in der EmployeeListComponent.ts ein gültiges Bearer-Token eintragen, sollten hier die Namen der in der Datenbank gespeicherten Mitarbeiter angezeigt werden!
-<ul>
-  <li *ngFor="let e of listedEmployees()">
-    {{ e.lastName }}, {{ e.firstName }},{{ e.city }},{{ e.postcode }},{{ e.street }},{{ e.phone }}
-  </li>
-</ul>
+    ></app-text-filter>
+  </div>
+  <div>
+    <app-table [configuration]="tableConfiguration" [data]="listedEmployees"></app-table>
+  </div>
+</body>

@@ -70,7 +70,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
 
   delete(id: number): void {
     this.isLoading.update(loadingIDs => loadingIDs.add(id)); 
-    console.log(this.isLoading())
+
     const subscription: Subscription = this.employeeService.delete(id)
     .pipe(
       take(1),
