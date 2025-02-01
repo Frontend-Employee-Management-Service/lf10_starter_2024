@@ -14,6 +14,7 @@ import {Routing} from "../components/table/routing";
 import {TableComponent} from "../components/table/table.component";
 import {ButtonComponent} from "../components/button/button.component";
 import {QualificationsCacheService} from "../services/qualifications-cache.service";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-qualification-list',
@@ -22,7 +23,8 @@ import {QualificationsCacheService} from "../services/qualifications-cache.servi
     CheckboxComponent,
     TextFilterComponent,
     TableComponent,
-    ButtonComponent
+    ButtonComponent,
+    RouterLink
   ],
   templateUrl: './qualification-list.component.html',
   styleUrl: './qualification-list.component.css'
@@ -54,11 +56,12 @@ export class QualificationListComponent {
     let labels: Label<Qualification >[] = [
       new Label('id', 'id'),
       new Label('skill', 'skill')
-    ]; //TODO
-    let select: SelectionBehaviour = new SelectionBehaviour(false, '');
-    let routing: Routing = new Routing(false,'');
-    this.tableConfiguration = new TableConfiguration(this.qualificationCache,
-      labels, true, select, routing);
+    ];
+    let selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(false, '');
+    let routing: Routing = new Routing(true, "qualification/edit/{id}");
+    this.tableConfiguration = new TableConfiguration(
+      this.qualificationCache,
+      labels, true, selectionBehaviour, routing);
   }
 
   handleEventInUseCheckbox(event: { check: boolean }) {
