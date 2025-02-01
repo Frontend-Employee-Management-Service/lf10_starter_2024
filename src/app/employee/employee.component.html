@@ -27,7 +27,18 @@
   <div class = "row">
     <div class="col-md-5 ps-5 p-2">
       <div class=" ">
-        <app-employee-form [employee]="this.employeeCacheService.select(this.id)!"
+        @if (emp) {
+          <app-employee-form [employee]="emp">
+            (formDataChange)="updateEmployeeData($event)">
+
+          </app-employee-form>
+
+        }@else{
+          <app-employee-form >
+            (formDataChange)="updateEmployeeData($event)">
+          </app-employee-form>
+        }
+        <app-employee-form [employee]="emp">
                            (formDataChange)="updateEmployeeData($event)">
 
         </app-employee-form>
@@ -36,7 +47,11 @@
 
     <div class="col-md-6 p-2">
       <div class="">
-        <app-table [configuration]="configuration" [data]="qualifications"></app-table>
+        @if (emp) {
+          <app-table [configuration]="configuration" [data]="signal(emp.qualifications!)"></app-table>
+        }@else{
+          <app-table [configuration]="configuration" [data]="signal([])"></app-table>
+        }
       </div>
     </div>
   </div >

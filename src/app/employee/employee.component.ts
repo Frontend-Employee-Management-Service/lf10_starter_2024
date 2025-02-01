@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, Input, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, inject, OnInit, Signal,computed, signal, WritableSignal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
 import {CommonModule} from "@angular/common";
@@ -13,6 +13,7 @@ import {QualificationsCacheService} from "../services/qualifications-cache.servi
 import {Qualification} from "../models/Qualification";
 import {Routing} from "../components/table/routing";
 import {ActivatedRoute} from "@angular/router";
+import {EmployeeService} from "../services/employee.service";
 
 @Component({
   selector: 'app-employee',
@@ -25,39 +26,41 @@ export class EmployeeComponent implements OnInit{
   private activatedRoute = inject(ActivatedRoute);
   id!: number;
 
+  formDataEmployee: WritableSignal<Employee> = signal(new Employee());
 
-  employee!: Employee;
+  emp!: Employee;
+  employee!: Signal<Employee|undefined>;
   configuration!: TableConfiguration<Employee>;
-  qualifications: WritableSignal<Qualification[]> = signal(
-    [new Qualification(1, 'Java'), new Qualification(2, 'Python'), new Qualification(3, 'C++'),
-      new Qualification(4, 'C#'), new Qualification(5, 'JavaScript'), new Qualification(6, 'TypeScript'),
-      new Qualification(7, 'HTML'), new Qualification(8, 'CSS'), new Qualification(9, 'SQL'),
-      ]);
-
-
+   qualifications!: Signal<Qualification[]>;
 
   constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
-  :QualificationsCacheService) {
+  :QualificationsCacheService, public employeeService: EmployeeService) {
   }
 
 
   // Handle updates from the child
   updateEmployeeData(data: Employee) {
-    this.employee = data; // Update local state
+    this.formDataEmployee.set(data); // Update local state
   }
 
   // Handle final form submission
   submitDataToBackend() {
-    console.log('Submitting to backend:', this.employee);
-    if (this.employee){
-      this.employee.qualifications = [];
-      this.employeeCacheService.insert(this.employee);
+    console.log('Submitting to backend:', this.formDataEmployee());
+    if (this.formDataEmployee()){
+
+      const payload =  this.formDataEmployee()!;
+      payload.qualifications = this.qualifications();
+      this.employeeCacheService.insert(payload);
     }
     console.log(this.employeeCacheService.read()())
   }
 
   ngOnInit(): void {
     this.id = this.activatedRoute.snapshot.params['id'];
+    this.employeeService.select(this.id).subscribe((employee: Employee) => {
+      this.emp = employee;
+      console.log("Employee loaded:", this.emp);
+    });
 
     //this.employee = new Employee();
     // if (this.id!=null) {
@@ -65,8 +68,27 @@ export class EmployeeComponent implements OnInit{
     //   this.e = this.employeeCacheService.select(this.id)!;
     //   console.log("Employee loaded:", this.e);
     // }
-
     this.employeeCacheService.refresh();
+
+    this.employee = computed(()=> {
+      const employees = this.employeeCacheService.read()();
+      const emp = employees.find((employee: Employee) => employee.id == this.id)
+      console.log("Employee loaded:", emp);
+      return emp;
+    })
+
+    this.qualifications = computed(()=> {
+      this.employeeCacheService.read()();
+      const tempQualifications =  this.employee()?.qualifications;
+      console.log("Qualifications loaded:", this.employee());
+
+      if (tempQualifications){
+        return tempQualifications;
+      }
+      return [];
+    })
+
+
     const labels : Label <Qualification> [] = [
       new Label('id', 'ID'),
       new Label('skill', 'Qualification'),
@@ -76,8 +98,8 @@ export class EmployeeComponent implements OnInit{
 
     this.configuration = new TableConfiguration<Qualification>(
       this.qualificationCacheService, labels, true,selectionBehaviour, routing
-
     )
-
   }
+
+  protected readonly signal = signal;
 }

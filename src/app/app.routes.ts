@@ -4,11 +4,10 @@ import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { QualificationListComponent } from './qualification-list/qualification-list.component';
 import {EmployeeComponent} from "./employee/employee.component";
 
-
 export const routes: Routes = [
-  {path: 'employee/all', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]},
+  {path: 'employee', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]},
   {path: 'qualifications', title: "employees", component: QualificationListComponent, canActivate: [AppAuthGuard]},
   {path: 'employee/new', title: "employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
   {path: 'employee/edit/:id', title: "employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
-  { path: '', redirectTo: '/employee/all', pathMatch: 'full' },
+  { path: '', redirectTo: '/employee/', pathMatch: 'full' },
 ];
