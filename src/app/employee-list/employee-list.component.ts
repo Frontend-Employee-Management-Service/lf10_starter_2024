@@ -11,10 +11,12 @@ import { TableConfiguration } from '../components/table/table-configuration';
 import { Label } from '../components/table/label';
 import { SelectionBehaviour } from '../components/table/selection-behaviour';
 import { Routing } from '../components/table/routing';
+import { ButtonComponent } from "../components/button/button.component";
+import { RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, TextFilterComponent, TableComponent],
+  imports: [CommonModule, TextFilterComponent, TableComponent, ButtonComponent, RouterLink, RouterModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })

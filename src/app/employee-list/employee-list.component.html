@@ -12,6 +12,11 @@
     [title]="'All'"
     (eventTriggered)="handleEventFilterAll($event)"
     ></app-text-filter>
+    <div class="button-container">
+      <a routerLink="/employee/new">
+        <app-button  [label]="'New Employee'"></app-button>
+      </a>
+    </div>
   </div>
   <div>
     <app-table [configuration]="tableConfiguration" [data]="listedEmployees"></app-table>

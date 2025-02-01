@@ -1,9 +1,14 @@
 .filter-container {
+  position: relative;
   display: flex;
   gap: 16px;
   align-items: center;
-  justify-content: flex-start;
   margin-bottom: var(--filter-margin_bottom);
 }
 
-
+.button-container {
+  width: 100%;
+  align-self: end;
+  display:flex;
+  justify-content: flex-end;
+}
