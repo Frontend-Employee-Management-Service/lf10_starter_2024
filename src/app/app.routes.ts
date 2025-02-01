@@ -8,8 +8,9 @@ import {QualificationComponent} from "./qualification/qualification.component";
 
 export const routes: Routes = [
   {path: 'employees', title: "employees", component: EmployeeListComponent, canActivate: [AppAuthGuard]},
-  {path: 'qualifications', title: "employees", component: QualificationListComponent, canActivate: [AppAuthGuard]},
-  {path: 'employee/new', title: "New Employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
+  {path: 'qualifications', title: "qualifications", component: QualificationListComponent, canActivate: [AppAuthGuard]},
+  {path: 'employee/new', title: "newEmployee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
+  {path: 'employee/edit/:id', title: "editEmployee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
   { path: '', redirectTo: '/employees', pathMatch: 'full' },
   {path: 'qualification/new', title: "New qualification", component: QualificationComponent, canActivate: [AppAuthGuard]},
   {path: 'qualification/edit/:id', title: "Edit qualification", component: QualificationComponent, canActivate: [AppAuthGuard]},

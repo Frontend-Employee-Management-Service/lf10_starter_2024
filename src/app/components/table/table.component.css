@@ -11,6 +11,8 @@
   --bs-table-bg: var(--ci_color);
   --bs-table-color:  white;
   font-weight:bold;
+  top: 0px;
+  position: sticky;
 }
 
 .table-row {
@@ -36,4 +38,11 @@ th {
 .symbol-container:hover{
   z-index: 1;
   --bs-table-bg:  white;
+}
+
+.scrollable{
+  display: block;
+  overflow: scroll;
+  width: inherit;
+  height: inherit;
 }

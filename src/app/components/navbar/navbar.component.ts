@@ -9,7 +9,7 @@ enum Domain{
 @Component({
   selector: 'app-navbar',
   imports: [
-     RouterLink, RouterLinkActive, RouterModule
+    RouterLink, RouterLinkActive, RouterModule
   ],
   templateUrl: './navbar.component.html',
   standalone: true,

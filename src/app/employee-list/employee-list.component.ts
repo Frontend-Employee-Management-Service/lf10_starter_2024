@@ -63,7 +63,7 @@ export class EmployeeListComponent implements OnInit{
       new Label("phone", "Phone")
     ];
     const selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(false, ""); 
-    const routing: Routing = new Routing(true, "employee/edit/{id}");
+    const routing: Routing = new Routing(true, "/employee/edit");
 
     this.tableConfiguration = new TableConfiguration(
       this.employeeCache,
