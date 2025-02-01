@@ -1,14 +1,9 @@
-.tools-container{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 16px;
-}
-
 .filters-container {
+  position: relative;
   display: flex;
   gap: 16px;
+  align-items: center;
+  margin-bottom: var(--filter-margin_bottom);
 }
 
 .text-filter-container {
@@ -17,20 +12,18 @@
 }
 
 .checkbox-container {
+  width: 50%;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .button-container {
-  display: flex;
-  gap: 16px;
+  width: 50%;
+  align-self: end;
+  display:flex;
+  justify-content: flex-end;
 }
 
 
-.table-container {
-  margin-top: 16px;
-  display: flex;
-  justify-content: space-between;
-}
 

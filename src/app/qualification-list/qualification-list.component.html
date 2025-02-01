@@ -1,33 +1,32 @@
 <body class="page-wrapper">
-<div class="tools-container">
-  <!--filters-->
-  <div class="filters-container">
-    <div class="text-filter-container">
-      <app-text-filter
-        [title]="'Employee'"
-        (eventTriggered)="handleEventFilterByEmployee($event)"
-      ></app-text-filter>
-      <app-text-filter
-        [title]="'Qualification'"
-        (eventTriggered)="handleEventFilterByQualification($event)"
-      ></app-text-filter>
-    </div>
-    <div class="checkbox-container">
-      <app-checkbox label="In use"
-                    defaultValue=true
-                    (eventTriggered)="handleEventInUseCheckbox($event)"></app-checkbox>
-      <app-checkbox label="Unused"
-                    defaultValue=true
-                    (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
-    </div>
+
+<!--filters-->
+<div class="filters-container">
+  <div class="text-filter-container">
+    <app-text-filter
+      [title]="'Employee'"
+      (eventTriggered)="handleEventFilterByEmployee($event)"
+    ></app-text-filter>
+    <app-text-filter
+      [title]="'Qualification'"
+      (eventTriggered)="handleEventFilterByQualification($event)"
+    ></app-text-filter>
+  </div>
+  <div class="checkbox-container">
+    <app-checkbox label="In use"
+                  defaultValue=true
+                  (eventTriggered)="handleEventInUseCheckbox($event)"></app-checkbox>
+    <app-checkbox label="Unused"
+                  defaultValue=true
+                  (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
   </div>
   <!--button-->
   <div class="button-container">
-    <app-button label="add"></app-button>
+    <app-button label="New Qualifiation"></app-button>
   </div>
 </div>
+
 <!--table-->
-<div class="table container">
-  <app-table [configuration]="tableConfiguration" [data]="listedQualifications"></app-table>
-</div>
+<app-table [configuration]="tableConfiguration" [data]="listedQualifications"></app-table>
+
 </body>
