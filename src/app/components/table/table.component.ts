@@ -1,7 +1,7 @@
-import {Component, Input, Signal} from '@angular/core';
-import {TableConfiguration} from './table-configuration';
-import {RouterLink} from '@angular/router';
-import {LoadingComponent} from "../loading/loading.component";
+import { Component, Input, Signal } from '@angular/core';
+import { TableConfiguration } from './table-configuration';
+import { RouterLink } from '@angular/router';
+import { LoadingComponent } from "../loading/loading.component";
 
 @Component({
   selector: 'app-table',

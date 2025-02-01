@@ -15,9 +15,25 @@
 
 .table-row {
   font-weight: normal;
-  --bs-table-color: var(--ci_color_grey)
+  --bs-table-color: var(--ci_color_grey);
+  --bs-table-bg: white;
 }
 
 th {
   font-weight: inherit;
+}
+
+.symbol-container {
+  z-index: 1;
+  background-color: white;
+  cursor:default;
+}
+
+.symbol-container>div {
+  margin: auto;
+}
+
+.symbol-container:hover{
+  z-index: 1;
+  --bs-table-bg:  white;
 }
