@@ -7,8 +7,7 @@ import {TableComponent} from "../components/table/table.component";
 import {QualificationFormComponent} from "../components/qualification-form/qualification-form.component";
 import {ActivatedRoute} from "@angular/router";
 import {QualificationService} from "../services/qualification.service";
-import {QualificationsCacheService} from "../services/qualifications-cache.service";
-import {Observable, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {Qualification} from "../models/Qualification";
 import {Label} from "../components/table/label";
 import {SelectionBehaviour} from "../components/table/selection-behaviour";
@@ -34,8 +33,9 @@ export class QualificationComponent implements OnInit, OnDestroy{
   private subscription!: Subscription;
   configuration!: TableConfiguration<Qualification>;
   employees!: Employee[];
+  protected readonly signal = signal;
 
-  constructor(private qualificationService: QualificationService,private qualificationCacheService: QualificationsCacheService,
+  constructor(private qualificationService: QualificationService,
               private employeeFilter:EmployeeFilterService, private employeeCacheService:EmployeesCacheService,
               private employeeService: EmployeeService) {
   }
@@ -43,12 +43,10 @@ export class QualificationComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     this.id = this.activatedRoute.snapshot.params['id'];
-    console.log("id:"+ this.id);
 
     this.subscription = this.qualificationService.selectAll().
       subscribe((qualifications: Qualification[]) => {
         this.qualification = qualifications.find(qualification => qualification.id == this.id);
-        console.log("qualification:"+ this.qualification?.skill);
       }
     )
 
@@ -56,7 +54,6 @@ export class QualificationComponent implements OnInit, OnDestroy{
 
     this.employeeService.selectAll().subscribe((employees: Employee[]) => {
       this.employees = this.employeeFilter.filterEmployeesByQualificationId(employees, this.id);
-      console.log("employees:", this.employees);
     });
 
     const labels : Label <Employee> [] = [
@@ -66,8 +63,6 @@ export class QualificationComponent implements OnInit, OnDestroy{
     ]
     const selectionBehaviour = new SelectionBehaviour(false,'');
     const routing = new Routing(false, '');
-
-    console.log("employees:", this.employees);
 
     this.configuration = new TableConfiguration<Employee>(
       this.employeeCacheService, labels, true,selectionBehaviour, routing
@@ -80,6 +75,6 @@ export class QualificationComponent implements OnInit, OnDestroy{
     }
   }
 
-  protected readonly signal = signal;
+
 }
 
