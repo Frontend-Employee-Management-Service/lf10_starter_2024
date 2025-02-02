@@ -30,15 +30,6 @@ export class EmployeeFilterService extends FilterService {
     return matchingEmployees;
   }
 
-  filterEmployeesByQualificationId(employees: Employee[], qualificationId: number): Employee[]{
-    let matchingEmployees: Employee[] = [];
-    matchingEmployees = employees.filter(employee => {
-      const qualifications = employee.qualifications ?? [];
-      return qualifications.some(qualification => qualification.id == qualificationId);
-    });
-    return matchingEmployees;
-  }
-
   filterAllEmployeeFields(employees: Employee[], keyword: string): Employee[] {
     let matchingEmployees: Employee[] = this.filterAll(employees, keyword);
     matchingEmployees = matchingEmployees.concat(
