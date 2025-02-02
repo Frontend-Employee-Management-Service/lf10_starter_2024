@@ -25,7 +25,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
 
   refresh() {
     const data: Employee[] = [];
-    const subscription: Subscription = this.employeeService.selectAll().subscribe(
+    const subscription: Subscription = this.employeeService.selectAll().pipe(take(1)).subscribe(
       (employees: Employee[]) => {
         this.notifyStateChange();
         employees.forEach(employee => {
@@ -34,6 +34,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
       }
     );
     this.subscriptions.push(subscription);
+    this.notifyStateChange();
     EmployeesCacheService.cache.set(data);
   }
 
