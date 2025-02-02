@@ -56,6 +56,10 @@ export abstract class DataCache<T extends { id?: number }> implements OnDestroy 
     return collection;
   }
 
+  public viewSelected(): any{
+    return this.getSelectedData();
+  }
+
   public ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }

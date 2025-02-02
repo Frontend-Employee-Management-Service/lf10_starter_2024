@@ -1,1 +1,59 @@
-<p>employee-add-qualification works!</p>
+<div class="page-wrapper">
+  <div class="content-container"> 
+    <!-- left -->
+     <div class="left">
+      <!-- heading -->
+      <div class="heading-container">
+        <div class="heading">
+          @if(id){
+            <h1>Edit Employee</h1>
+          } @else {
+            <h1>New Employee</h1>
+          }
+          <svg class="arrow" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 16H30M30 16L16 2M30 16L16 30" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h1>Add Qualifications</h1>
+        </div>
+        @if(id){
+          <div>ID: {{id}}</div>
+        }
+      </div>
+      <!-- filter -->
+      <div class="filters-container">
+        <div class="text-filter-container">
+          <app-text-filter
+            [title]="'Qualification'"
+            (eventTriggered)="handleEventFilterByQualification($event)"
+          ></app-text-filter>
+        </div>
+        <div class="checkbox-container">
+          <app-checkbox label="In use"
+                        defaultValue=true
+                        (eventTriggered)="handleEventInUseCheckbox($event)"></app-checkbox>
+          <app-checkbox label="Unused"
+                        defaultValue=true
+                        (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
+        </div>
+      </div>
+      <app-table [configuration]="tableConfiguration" [data]="displayData"></app-table>
+    </div>
+     <!-- right -->
+      <div class="right">
+        <div class="heading">
+          <h1 class="text-centered" >New Qualification</h1>
+        </div>
+        <app-qualification-form [qualification]="qualificationData" (formDataChange)="updateQualificationData($event)"></app-qualification-form>
+        <app-button [label]="'Add'" (click)="submitQualification()"></app-button>
+      </div>
+  </div>
+  <!-- bottom-bar -->
+   <div class="bottom-bar">
+    <a routerLink="/{{returnUrl}}">
+      <app-button class="button-bottom" [label]="'Save'" ></app-button>
+    </a>
+    <a routerLink="/{{returnUrl}}">
+      <app-button class="button-bottom" [label]="'Cancel'" (click)="deleteSelectedData()" ></app-button>
+    </a>
+   </div>
+</div>
