@@ -21,6 +21,15 @@ export class EmployeeFilterService extends FilterService {
     return matchingEmployees;
   }
 
+  filterEmployeesByQualificationId(employees: Employee[], qualificationId: number): Employee[]{
+    let matchingEmployees: Employee[] = [];
+    matchingEmployees = employees.filter(employee => {
+      const qualifications = employee.qualifications ?? [];
+      return qualifications.some(qualification => qualification.id == qualificationId);
+    });
+    return matchingEmployees;
+  }
+
   filterEmployeesByQualification(employees: Employee[], qualificationKeyword: string): Employee[]{
     let matchingEmployees: Employee[] = [];
     matchingEmployees = employees.filter(employee => {
