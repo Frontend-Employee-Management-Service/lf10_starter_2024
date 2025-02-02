@@ -15,6 +15,7 @@ import {Routing} from "../components/table/routing";
 import {ActivatedRoute} from "@angular/router";
 import {EmployeeService} from "../services/employee.service";
 import {Subscription} from "rxjs";
+import {QualificationService} from "../services/qualification.service";
 
 @Component({
   selector: 'app-employee',
@@ -33,7 +34,7 @@ export class EmployeeComponent implements OnInit, OnDestroy{
   emp!: Employee;
   configuration!: TableConfiguration<Employee>;
 
-  constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
+  constructor(private qualificationCacheService
   :QualificationsCacheService, public employeeService: EmployeeService) {
   }
 
@@ -58,11 +59,11 @@ export class EmployeeComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     this.id = this.activatedRoute.snapshot.params['id'];
-    this.employeeService.select(this.id).subscribe((employee: Employee) => {
+
+    this.subscription = this.employeeService.select(this.id).
+      subscribe((employee: Employee) => {
       this.emp = employee;
     });
-
-    this.employeeCacheService.refresh();
 
     const labels : Label <Qualification> [] = [
       new Label('id', 'ID'),
