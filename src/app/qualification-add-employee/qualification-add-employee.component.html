@@ -12,7 +12,7 @@
   </div>
   <div class="row ">
     <!--left components-->
-    <div class="col-4">
+    <div class="col-5">
       <!--Filter-->
       <div class="content-wrapper">
         <app-text-filter
@@ -28,11 +28,12 @@
     <!--spacing-->
     <div class="col-2"></div>
     <!--right component-->
-    <div class="col-6">
+    <div class="col-5">
       <!--New employee-->
       <div class="content-wrapper">
         <h3 class="ps-5">New Employee</h3>
-        <app-employee-form (formDataChange)="insertNewEmployee($event)"></app-employee-form>
+        <app-employee-form (formDataChange)="updateEmployeeForm($event)"></app-employee-form>
+        <app-button label="Add" (click)="addEmployee()"></app-button>
       </div>
     </div>
   </div>
@@ -41,7 +42,7 @@
       <app-button label="Cancel"></app-button>
     </a>
     <a routerLink="/qualification/new"> <!--TODO route string in .ts-->
-      <app-button label="save" (click)="updateAdHocCache()">Submit Data</app-button>
+      <app-button label="save" (click)="sendAddedEmployees()">Submit Data</app-button>
     </a>
   </div>
 
