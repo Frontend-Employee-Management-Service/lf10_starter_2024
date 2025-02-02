@@ -12,6 +12,6 @@ export const routes: Routes = [
   {path: 'employee/edit/:id', title: "Edit employee", component: EmployeeComponent, canActivate: [AppAuthGuard]},
   {path: 'qualification/new', title: "New qualification", component: QualificationComponent, canActivate: [AppAuthGuard]},
   {path: 'qualification/edit/:id', title: "Edit qualification", component: QualificationComponent, canActivate: [AppAuthGuard]},
-  { path: '', redirectTo: '/employees', pathMatch: 'full' },
+  { path: '', redirectTo: '/employee', pathMatch: 'full' },
 
 ];
