@@ -1,4 +1,4 @@
-import {Component, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Signal, signal, WritableSignal} from '@angular/core';
 import {CheckboxComponent} from "../components/checkbox/checkbox.component";
 import {TextFilterComponent} from "../components/text-filter/text-filter.component";
 import {Employee} from "../models/Employee";
@@ -7,83 +7,105 @@ import {EmployeeService} from "../services/employee.service";
 import {EmployeesCacheService} from "../services/employees-cache.service";
 import {QualificationFilterService} from "../services/qualification-filter.service";
 import {Qualification} from "../models/Qualification";
+import {TableConfiguration} from "../components/table/table-configuration";
+import {Label} from "../components/table/label";
+import {SelectionBehaviour} from "../components/table/selection-behaviour";
+import {Routing} from "../components/table/routing";
+import {TableComponent} from "../components/table/table.component";
+import {ButtonComponent} from "../components/button/button.component";
+import {QualificationsCacheService} from "../services/qualifications-cache.service";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-qualification-list',
   standalone: true,
   imports: [
     CheckboxComponent,
-    TextFilterComponent
+    TextFilterComponent,
+    TableComponent,
+    ButtonComponent,
+    RouterLink
   ],
   templateUrl: './qualification-list.component.html',
   styleUrl: './qualification-list.component.css'
 })
 export class QualificationListComponent {
   //Data
-  allEmployees: WritableSignal<Employee[]> = signal([]);
-  listedQualification: WritableSignal<Qualification[]> = signal([]);
+  listedQualifications: Signal<Qualification[]> = signal([]);
   //Filter
-  private inUseIsChecked: boolean = true; //By default, both checkboxes are checked (list all the entries)
-  private unusedIsChecked: boolean = true;
-  private keywords: Map<string, string> = new Map<string, string>();
+  private inUseIsChecked : WritableSignal<boolean> = signal(true); //By default, both checkboxes are checked (list all the entries)
+  private unusedIsChecked : WritableSignal<boolean> = signal(true);
+  private keywords : WritableSignal<Map<string, string>> = signal(new Map<string, string>());
+  tableConfiguration: TableConfiguration<Qualification>;
 
   constructor(private http: HttpClient,
               private service: EmployeeService,
               private employeeCache: EmployeesCacheService,
-              private qualificationCache: EmployeesCacheService,
+              private qualificationCache: QualificationsCacheService,
               private qualificationFilter: QualificationFilterService) {
     employeeCache.refresh();
-    this.allEmployees.set(this.employeeCache.read()());
     qualificationCache.refresh();
-    this.listedQualification.set(this.qualificationCache.read()());
+    this.listedQualifications = computed<Qualification[]>(() => {
+      const filtersKeywords = this.keywords();
+      const inUse = this.inUseIsChecked();
+      const unused = this.unusedIsChecked();
+      return this.doFilter(filtersKeywords, inUse, unused, this.qualificationCache.read()(), this.employeeCache.read()());
+    });
+
+    //Table configuration
+    let labels: Label<Qualification >[] = [
+      new Label('id', 'id'),
+      new Label('skill', 'skill')
+    ];
+    let selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(false, '');
+    let routing: Routing = new Routing(true, "/qualification/edit");
+    this.tableConfiguration = new TableConfiguration(
+      this.qualificationCache,
+      labels, true, selectionBehaviour, routing);
   }
 
   handleEventInUseCheckbox(event: { check: boolean }) {
-    this.inUseIsChecked = event.check;
-    this.doFilter();
+    this.inUseIsChecked.set(event.check);
   }
 
   handleEventUnusedCheckbox(event: { check: boolean }) {
-    this.unusedIsChecked = event.check;
-    this.doFilter();
+    this.unusedIsChecked.set(event.check);
   }
 
   handleEventFilterByQualification(event: { value: string }) {
     this.setFilterKeyword('qualification', event.value);
-    this.doFilter();
   }
 
   handleEventFilterByEmployee(event: { value: string }) {
     this.setFilterKeyword('employee', event.value);
-    this.doFilter()
   }
 
   setFilterKeyword(key: string, value: string) {
+    const filterKeywords = this.keywords();
     if (value == null || value == "") {
-      this.keywords.delete(key)
-      this.allEmployees.set(this.employeeCache.read()());
-      this.listedQualification.set(this.qualificationCache.read()());
+      filterKeywords.delete(key)
     } else {
-      this.keywords.set(key, value);
+      filterKeywords.set(key, value);
     }
+    const newMap = new Map<string,string>();
+    filterKeywords.forEach((value, key) => { newMap.set(key, value); });
+    this.keywords.set(newMap);
   }
 
-  private doFilter() {
-    console.log("doFilter()");
-    console.log('in use:' + this.inUseIsChecked);
-    console.log('Unused:' + this.unusedIsChecked);
-
+  private doFilter(filtersKeywords: Map<string, string>, inUse: boolean, unused: boolean,
+                   allQualifications: Qualification[], allEmployees : Employee[]) : Qualification[] {
     let finalResult: Qualification[] = this.qualificationFilter
-      .filterByUsagesCheckboxes(this.qualificationCache.read()(), this.employeeCache.read()(), this.inUseIsChecked, this.unusedIsChecked);
+      .filterByUsagesCheckboxes(allQualifications, allEmployees, inUse, unused);
 
-    if (this.keywords.has("employee")) {
-      const filterByEmployeesResult = this.qualificationFilter.filterQualificationsByEmployeeName(this.employeeCache.read()(), this.keywords.get("employee")!);
+    if (filtersKeywords.has("employee")) {
+      const filterByEmployeesResult = this.qualificationFilter
+        .filterQualificationsByEmployeeName(allEmployees, filtersKeywords.get("employee")!);
       finalResult = this.qualificationFilter.getIntersectionOfResultSets(finalResult, filterByEmployeesResult);
     }
-    if (this.keywords.has("qualification")) {
-      finalResult = this.qualificationFilter.filterColumn(finalResult, 'skill', this.keywords.get("qualification")!);
+    if (filtersKeywords.has("qualification")) {
+      finalResult = this.qualificationFilter.filterColumn(finalResult, 'skill', filtersKeywords.get("qualification")!);
     }
-    this.listedQualification.set(finalResult);
+    return finalResult;
   }
 
 }

@@ -7,16 +7,23 @@ import { Subscription } from "rxjs";
 export abstract class DataCache<T extends { id?: number }> implements OnDestroy {
   protected subscriptions: Subscription[] = [];
   public readonly isLoading: WritableSignal<Set<number>> = signal(new Set<number>());
+  public stateChangeSignal: WritableSignal<number> = signal(0);
 
   public getSubscriptions(): Subscription[] {
     return this.subscriptions;
+  }
+
+  public notifyStateChange(){
+    // does nothing else than switching the number of the Signal between 0 and 1
+    // can be used to trigger reactive behaviour, e.g. computed(), effect()
+    this.stateChangeSignal.update(state => (state + 1) % 2);
   }
 
   public abstract getSelectedData(): Map<string, T[]>;
 
   public abstract refresh(): void;
 
-  public abstract read(): Signal<T>;
+  public abstract read(): WritableSignal<T[]>;
 
   public abstract insert(dto: T): void;
 

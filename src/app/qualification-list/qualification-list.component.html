@@ -1,5 +1,8 @@
-<div class="filter-checkbox-container">
-  <div class="filter-container">
+<body class="page-wrapper">
+
+<!--filters-->
+<div class="filters-container">
+  <div class="text-filter-container">
     <app-text-filter
       [title]="'Employee'"
       (eventTriggered)="handleEventFilterByEmployee($event)"
@@ -17,4 +20,15 @@
                   defaultValue=true
                   (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
   </div>
+  <!--button-->
+  <div class="button-container">
+    <a routerLink="/qualification/new">
+      <app-button label="New Qualifiation"></app-button>
+    </a>
+  </div>
 </div>
+
+<!--table-->
+<app-table [configuration]="tableConfiguration" [data]="listedQualifications"></app-table>
+
+</body>

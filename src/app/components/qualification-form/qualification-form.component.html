@@ -1,0 +1,12 @@
+<form>
+  <div class="form-group">
+    <!-- Qualification -->
+    <div class="row align-items-center mb-3">
+      <label class="col-sm-3 col-form-label col-md-1 label">Qualification</label>
+      <div class="col-sm-2">
+        <input class="form-control input" [(ngModel)]="qualification.skill" (ngModelChange)="updateFormData()"
+          name="Qualification" type="text" placeholder="Qualification">
+      </div>
+    </div>
+  </div>
+</form>

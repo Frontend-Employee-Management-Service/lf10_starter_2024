@@ -27,6 +27,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
     const data: Employee[] = [];
     const subscription: Subscription = this.employeeService.selectAll().subscribe(
       (employees: Employee[]) => {
+        this.notifyStateChange();
         employees.forEach(employee => {
           data.push(employee);
         });
@@ -45,6 +46,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
     const result$: Observable<Employee> = this.employeeService.insert(employee);
     const subscription: Subscription = result$.subscribe(
       (newEmployee: Employee) => {
+        this.notifyStateChange();
         EmployeesCacheService.cache.update(data => {
           data.push(newEmployee);
           return data;
@@ -58,6 +60,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
     const result$: Observable<Employee> = this.employeeService.update(employee);
     const subscription: Subscription = result$.subscribe(
       (updatedEmployee: Employee) => {
+        this.notifyStateChange();
         EmployeesCacheService.cache.update(data => {
           data = data.filter(item => item.id !== employee.id);
           data.push(updatedEmployee);
@@ -70,7 +73,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
 
   delete(id: number): void {
     this.isLoading.update(loadingIDs => loadingIDs.add(id)); 
-    console.log(this.isLoading())
+
     const subscription: Subscription = this.employeeService.delete(id)
     .pipe(
       take(1),
@@ -86,6 +89,7 @@ export class EmployeesCacheService extends DataCache<Employee> {
       {
         complete: () =>  {
           this.isLoading.update(loadingIDs => {
+            this.notifyStateChange();
             EmployeesCacheService.cache.update(values => values.filter(entry => entry.id !== id))
             loadingIDs.delete(id);
             return loadingIDs;

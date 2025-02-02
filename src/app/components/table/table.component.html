@@ -1,3 +1,4 @@
+<div class="scrollable">
 <table class="table">
   <thead >
     <tr class="table-primary table-head">
@@ -15,12 +16,12 @@
   <tbody>
     @for(row of data(); track row.id){
         @if(configuration.routing.activated){
-          <tr class="table-secondary table-row table-row_routable" [routerLink]="[configuration.getRoutingLink(row.id)]" >
+          <tr class="table-secondary table-row hover-effect_routable"  >
             @for(label of configuration.labels ; track $index){
-              <th scope="row">{{row[label.key]}}</th>
+              <th scope="row" [routerLink]="[configuration.routing.templateString, row.id]">{{row[label.key]}}</th>
             }
             @if(configuration.deleteActivated){
-              <th scope="row">
+              <th scope="row" class="symbol-container">
               @if(configuration.getCache().isLoading().has(row.id)){
                 <app-loading class="garbage-can_size"></app-loading>
               } @else {
@@ -44,7 +45,7 @@
               <th scope="row">{{row[label.key]}}</th>
             }
             @if(configuration.deleteActivated){
-              <th scope="row">
+              <th scope="row" class="symbol-container">
               @if(configuration.getCache().isLoading().has(row.id)){
                 <app-loading class="garbage-can_size"></app-loading>
               } @else {
@@ -66,3 +67,4 @@
     }
   </tbody>
 </table>
+</div>
