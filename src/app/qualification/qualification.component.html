@@ -41,8 +41,7 @@
     <div class="col-md-6 p-2">
       <div class="">
         @if (qualification) {
-          //TODO: Add the correct data (employees who have this qualification) to the table
-          <app-table [configuration]="configuration" [data]="signal([employees])"></app-table>
+          <app-table [configuration]="configuration" [data]="signal(employees)"></app-table>
         }@else{
           <app-table [configuration]="configuration" [data]="signal([])"></app-table>
         }
