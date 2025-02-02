@@ -3,11 +3,12 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
         <li class="nav-item active" id="employee">
-          <a class="nav-link nav-text navbar-brand mb-4" routerLink="employees" routerLinkActive="active-nav-text"
+          <a class="nav-link nav-text navbar-brand mb-4" routerLink="employee" routerLinkActive="active-nav-text"
+             [routerLinkActiveOptions]="{exact: false}"
              ariaCurrentWhenActive="page" (click)="setActive(domains.employee)">Employee</a>
         </li>
         <li class="nav-item" id="qualification">
-          <a class="nav-link nav-text navbar-brand mb-4" href="" routerLink="/qualifications"
+          <a class="nav-link nav-text navbar-brand mb-4" href="" routerLink="qualification"
              routerLinkActive="active-nav-text" ariaCurrentWhenActive="page">Qualification</a>
         </li>
       </ul>
