@@ -32,7 +32,6 @@ export class EmployeeComponent implements OnInit, OnDestroy{
   formDataEmployee: WritableSignal<Employee> = signal(new Employee());
 
   emp!: Employee;
-  qualifications!: Qualification[];
   configuration!: TableConfiguration<Employee>;
 
   constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
@@ -66,12 +65,6 @@ export class EmployeeComponent implements OnInit, OnDestroy{
       subscribe((employee: Employee) => {
       this.emp = employee;
     });
-
-    this.subscription = this.qualificationService.selectAll().
-        subscribe((qualifications: Qualification[]) => {
-      this.qualifications = qualifications;
-    });
-
 
     this.employeeCacheService.refresh();
 
