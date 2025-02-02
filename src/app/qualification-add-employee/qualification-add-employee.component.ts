@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, computed, inject, signal, Signal} from '@angular/core';
 import {TextFilterComponent} from "../components/text-filter/text-filter.component";
 import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
 import {Employee} from "../models/Employee";
@@ -14,7 +14,7 @@ import {EmployeesCacheService} from "../services/employees-cache.service";
 import {QualificationsCacheService} from "../services/qualifications-cache.service";
 import {QualificationFilterService} from "../services/qualification-filter.service";
 import {ButtonComponent} from "../components/button/button.component";
-import {Router, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {QualificationService} from "../services/qualification.service";
 
 @Component({
@@ -31,8 +31,10 @@ import {QualificationService} from "../services/qualification.service";
   styleUrl: './qualification-add-employee.component.css'
 })
 export class QualificationAddEmployeeComponent {
+  private activatedRoute = inject(ActivatedRoute);
   id!: number;
   tableConfiguration: TableConfiguration<Qualification>;
+  listedEmployees: Signal<Employee[]> = signal([]);
 
   constructor(private http: HttpClient,
               private employeeService: EmployeeService,
@@ -52,6 +54,11 @@ export class QualificationAddEmployeeComponent {
     this.tableConfiguration = new TableConfiguration(
       this.employeeCache,
       labels, true, selectionBehaviour, routing);
+    employeeCache.refresh();
+    this.listedEmployees = computed<Employee[]>(() => {
+      let result: Employee[] = this.employeeCache.read()();
+      return result;
+    })
   }
 
   handleEventFilter($event: { value: string }) {

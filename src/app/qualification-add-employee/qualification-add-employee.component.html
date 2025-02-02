@@ -21,7 +21,8 @@
         ></app-text-filter>
 
         <!--all qualifications-->
-        <app-table [configuration]="tableConfiguration"></app-table>
+        <app-table [configuration]="tableConfiguration"
+                   [data]="listedEmployees"></app-table>
       </div>
     </div>
     <!--spacing-->
@@ -31,7 +32,6 @@
       <!--New employee-->
       <div class="content-wrapper">
         <h3 class="ps-5">New Employee</h3>
-
         <app-employee-form (formDataChange)="insertNewEmployee($event)"></app-employee-form>
       </div>
     </div>
