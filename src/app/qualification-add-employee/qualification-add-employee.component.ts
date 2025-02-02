@@ -82,6 +82,7 @@ export class QualificationAddEmployeeComponent {
     if(currentQualification != undefined){
       const checkedEmployees =
         this.employeeFilter.filterEmployeesByQualificationId(this.employeeCache.read()(), qualificationId);
+      checkedEmployees.forEach(employee => {this.employeeCache.addToSelected(this.returnUrl, employee);});
     }
   }
 
@@ -91,7 +92,7 @@ export class QualificationAddEmployeeComponent {
       new Label('firstName', 'Firstname'),
       new Label('lastName', 'Lastname'),
     ];
-    let selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(false, this.returnUrl);
+    let selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(true, this.returnUrl);
     let routing: Routing = new Routing(false);
     this.tableConfiguration = new TableConfiguration(
       this.employeeCache, labels, false, selectionBehaviour, routing);
