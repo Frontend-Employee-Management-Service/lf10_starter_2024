@@ -36,7 +36,7 @@
                         (eventTriggered)="handleEventUnusedCheckbox($event)"></app-checkbox>
         </div>
       </div>
-      <app-table [configuration]="tableConfiguration" [data]="displayData"></app-table>
+      <app-table [configuration]="configureTable()" [data]="displayData"></app-table>
     </div>
      <!-- right -->
       <div class="right">

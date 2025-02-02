@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import { AfterContentInit, Component, computed, DoCheck, effect, OnChanges, OnInit, signal, Signal, SimpleChanges, WritableSignal } from '@angular/core';
 import { TableComponent } from "../components/table/table.component";
 import { ButtonComponent } from "../components/button/button.component";
 import { QualificationsCacheService } from '../services/qualifications-cache.service';
@@ -22,7 +22,7 @@ import { QualificationFilterService } from '../services/qualification-filter.ser
   templateUrl: './employee-add-qualification.component.html',
   styleUrl: './employee-add-qualification.component.css'
 })
-export class EmployeeAddQualificationComponent implements OnInit {
+export class EmployeeAddQualificationComponent implements OnInit, DoCheck {
   qualificationData: Qualification = new Qualification();
   tableConfiguration!: TableConfiguration<Qualification>;
   displayData!: Signal<Qualification[]>;
@@ -31,6 +31,8 @@ export class EmployeeAddQualificationComponent implements OnInit {
   private inUseSignal: WritableSignal<boolean> = signal(true); //By default, both checkboxes are checked (list all the entries)
   private unusedSignal: WritableSignal<boolean> = signal(true);
   private qualificationSearchWordSignal: WritableSignal<string> = signal("");
+  test: Signal<Employee> = signal(new Employee());
+  loaded = false;
 
 
   constructor(
@@ -40,16 +42,31 @@ export class EmployeeAddQualificationComponent implements OnInit {
     private qualificationsFilter: QualificationFilterService
   ) { }
 
+  ngDoCheck(): void {
+    if(this.loaded)
+      return;
+    let employee = this.employeesCache.read()().find(val => val.id == this.id as unknown as number);
+    if(employee && this.id){
+      employee.qualifications?.forEach(val => this.qualificationsCache.addToSelected(this.returnUrl, val))
+      this.qualificationsCache.notifyStateChange();
+      this.loaded = true;
+    }
+  }
+
   ngOnInit(): void {
     this.qualificationsCache.refresh();
     this.employeesCache.refresh();
-    const currentUrl: UrlSegment[] = this.route.snapshot.url;
-    this.returnUrl = currentUrl.filter((val, index, arr) => index != arr.length - 1).join("/")
-    if(currentUrl[1].toString() == "edit")
-      this.id = currentUrl[2].toString();
-
+    this.setUrlDependendState();
     this.computeDisplayedData();
     this.configureTable();
+  }
+
+  private setUrlDependendState() {
+    const currentUrl: UrlSegment[] = this.route.snapshot.url;
+    this.returnUrl = currentUrl.filter((val, index, arr) => index != arr.length - 1).join("/");
+    if (currentUrl[1].toString() == "edit") {
+      this.id = currentUrl[2].toString();
+    }
   }
 
   private computeDisplayedData() {
@@ -60,7 +77,7 @@ export class EmployeeAddQualificationComponent implements OnInit {
       const unused = this.unusedSignal();
       const allQualifications: Qualification[] = this.qualificationsCache.read()();
       const allEmployees: Employee[] = this.employeesCache.read()();
-
+      
       let finalResult: Qualification[] = this.qualificationsFilter.filterByUsagesCheckboxes(allQualifications, allEmployees, inUse, unused);
       if (qualificationSearchWord != "") {
         finalResult = this.qualificationsFilter.filterColumn(finalResult, 'skill', qualificationSearchWord);
@@ -69,14 +86,14 @@ export class EmployeeAddQualificationComponent implements OnInit {
     });
   }
 
-  private configureTable() {
+  public configureTable(): TableConfiguration<Qualification>{
     const labels: Label<Qualification>[] = [
       new Label("id", "ID"),
       new Label("skill", "Qualification"),
     ];
     const selectionBehaviour: SelectionBehaviour = new SelectionBehaviour(true, this.returnUrl);
     const routing: Routing = new Routing(false);
-    this.tableConfiguration = new TableConfiguration(
+    return  new TableConfiguration(
       this.qualificationsCache,
       labels,
       false,

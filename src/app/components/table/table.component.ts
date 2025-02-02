@@ -26,20 +26,19 @@ export class TableComponent {
   }
 
   onCheckboxChange($event: Event, id: number) {
-      if(($event.target as HTMLInputElement).checked){
-        this.configuration.getCache().addToSelected(this.configuration.selection.selector, this.data().find(val => val.id == id));
-      } else {
-        this.configuration.getCache().removeFromSelected(this.configuration.selection.selector, this.data().find(val => val.id == id));
-      }
+    if (($event.target as HTMLInputElement).checked) {
+      this.configuration.getCache().addToSelected(this.configuration.selection.selector, this.data().find(val => val.id == id));
+    } else {
+      this.configuration.getCache().removeFromSelected(this.configuration.selection.selector, this.data().find(val => val.id == id));
     }
-
+  }
 
   isChecked(id: number): boolean {
     const selectedMap = this.configuration.getCache().viewSelected() as Map<string, any[]>;
-    if(!selectedMap.has(this.configuration.selection.selector))
+    if (!selectedMap.has(this.configuration.selection.selector))
       return false;
 
-    if(selectedMap.get(this.configuration.selection.selector)!.find(val => val.id == id))
+    if (selectedMap.get(this.configuration.selection.selector)!.find(val => val.id == id))
       return true;
     return false;
   }
