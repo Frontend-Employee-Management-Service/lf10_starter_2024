@@ -14,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-    @for(row of data(); track row.id){
+    @for(row of data();track $index){
         @if(configuration.routing.activated){
           <tr class="table-secondary table-row hover-effect_routable"  >
             @for(label of configuration.labels ; track $index){
@@ -35,7 +35,7 @@
             }
             @if(configuration.selection.activated){
               <th scope="row">
-                <input class="hover-effect" type="checkbox">
+                <input class="hover-effect" type="checkbox" [checked]="isChecked(row.id)" (change)="onCheckboxChange($event, row.id)">
               </th>
             }
           </tr>
@@ -59,7 +59,7 @@
             }
             @if(configuration.selection.activated){
               <th scope="row">
-                <input class="hover-effect" type="checkbox">
+                <input class="hover-effect" type="checkbox" [checked]="isChecked(row.id)" (change)="onCheckboxChange($event, row.id)">
               </th>
             }
           </tr>

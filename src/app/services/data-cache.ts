@@ -36,15 +36,17 @@ export abstract class DataCache<T extends { id?: number }> implements OnDestroy 
       this.getSelectedData().has(selector) ?
         this.getSelectedData().get(selector)! :
         new Array<T>();
-    collection.push(dto);
-    this.getSelectedData().set(selector, collection);
+    if(!collection.find(val => val.id == dto.id)){
+      collection.push(dto);
+      this.getSelectedData().set(selector, collection);
+    }
   }
 
   public removeFromSelected(selector: string, dto: T): void {
     if (!this.getSelectedData().has(selector))
       return;
     const collection: T[] = this.getSelectedData().get(selector)!;
-    const updatedCollection: T[] = collection.filter(entry => entry.id === dto.id);
+    const updatedCollection: T[] = collection.filter(entry => entry.id != dto.id);
     this.getSelectedData().set(selector, updatedCollection);
   }
 
@@ -54,6 +56,10 @@ export abstract class DataCache<T extends { id?: number }> implements OnDestroy 
     const collection: T[] = this.getSelectedData().get(selector)!;
     this.getSelectedData().delete(selector);
     return collection;
+  }
+
+  public viewSelected(): any{
+    return this.getSelectedData();
   }
 
   public ngOnDestroy(): void {
