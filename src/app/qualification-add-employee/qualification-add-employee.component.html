@@ -1,36 +1,48 @@
 <div class="container-fluid">
-  <div class="col">
-    <!--page title-->
-    @if (id) {
-      <h3 class="ps-5">Edit Employee -> Add Employee</h3>
-      <p class="ps-5">ID: {{ id }}</p>
-    } @else {
-      <h3 class="ps-5">New Employee -> Add Employee</h3>
-    }
-  </div>
-  <!--left components-->
-  <div class="col-6">
-    <!--Filter-->
-    <app-text-filter
-      [title]="'Employee First/Last Name'"
-      (eventTriggered)="handleEventFilter($event)"
-    ></app-text-filter>
-    <!--all qualifications-->
-    <app-table [configuration]="tableConfiguration"></app-table>
-  </div>
-  <!--right component-->
-  <div class="col-6">
-    <!--New employee-->
-    <app-employee-form (formDataChange)="insertNewEmployee($event)"></app-employee-form>
-  </div>
-  <div class="col">
-    <div class="d-flex justify-content-center gap-5 " style="position: fixed; bottom: 3%; left:50% ;transform: translateX(-50%);">
-      <a routerLink="/qualification/new"> <!--TODO route string in .ts-->
-        <app-button label="Cancel"></app-button>
-        <app-button label="save" (click)="updateAdHocCache()">Submit Data</app-button>
-      </a>
-
-
+  <div class="row ">
+    <div class="page-title">
+      <!--page title-->
+      @if (id) {
+        <h3 class="ps-5">Edit Employee &rarr; Add Employee</h3>
+        <p class="ps-5">ID: {{ id }}</p>
+      } @else {
+        <h3 class="ps-5">New Employee &rarr; Add Employee</h3>
+      }
     </div>
   </div>
+  <div class="row ">
+    <!--left components-->
+    <div class="col-4">
+      <!--Filter-->
+      <div class="content-wrapper">
+        <app-text-filter
+          [title]="'Employee First/Last Name'"
+          (eventTriggered)="handleEventFilter($event)"
+        ></app-text-filter>
+
+        <!--all qualifications-->
+        <app-table [configuration]="tableConfiguration"></app-table>
+      </div>
+    </div>
+    <!--spacing-->
+    <div class="col-2"></div>
+    <!--right component-->
+    <div class="col-6">
+      <!--New employee-->
+      <div class="content-wrapper">
+        <h3 class="ps-5">New Employee</h3>
+
+        <app-employee-form (formDataChange)="insertNewEmployee($event)"></app-employee-form>
+      </div>
+    </div>
+  </div>
+  <div class="buttons-container">
+    <a routerLink="/qualification/new"> <!--TODO route string in .ts-->
+      <app-button label="Cancel"></app-button>
+    </a>
+    <a routerLink="/qualification/new"> <!--TODO route string in .ts-->
+      <app-button label="save" (click)="updateAdHocCache()">Submit Data</app-button>
+    </a>
+  </div>
+
 </div>
