@@ -12,7 +12,7 @@
              routerLinkActive="active-nav-text" ariaCurrentWhenActive="page">Qualification</a>
         </li>
       </ul>
-      <a href="https://keycloak.szut.dev/auth/realms/szut/protocol/openid-connect/logout">
+      <a (click)="logout()">
         <img class="nav-item" width="40" height="40" [src]="logoutIcon">
       </a>
     </div>
