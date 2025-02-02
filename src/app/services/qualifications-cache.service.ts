@@ -8,7 +8,6 @@ import { DataCache } from './data-cache';
   providedIn: 'root'
 })
 export class QualificationsCacheService extends DataCache<Qualification> {
-
   private static cache: WritableSignal<Qualification[]> = signal<Qualification[]>([]);
   private static selected: Map<string, Qualification[]> = new Map<string, Qualification[]>();
 
@@ -26,13 +25,16 @@ export class QualificationsCacheService extends DataCache<Qualification> {
 
   refresh(): void {
     const data: Qualification[] = [];
-    const subscription: Subscription = this.dataService.selectAll()
+    const subscription: Subscription = this.dataService.selectAll().pipe(take(1))
       .subscribe(
-        (qualifications: Qualification[]) => {
-          this.notifyStateChange();
-          qualifications.forEach(entry => data.push(entry));
+        {
+          next: (qualifications: Qualification[]) => {
+            this.notifyStateChange();
+            qualifications.forEach(entry => data.push(entry));
+          },
+          complete: () => this.notifyStateChange()
         }
-      );
+      )
     this.subscriptions.push(subscription);
     QualificationsCacheService.cache.set(data);
   }
