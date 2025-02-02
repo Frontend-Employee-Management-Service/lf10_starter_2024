@@ -34,9 +34,8 @@ export class EmployeeComponent implements OnInit, OnDestroy{
   emp!: Employee;
   configuration!: TableConfiguration<Employee>;
 
-  constructor(public employeeCacheService:EmployeesCacheService, private qualificationCacheService
-  :QualificationsCacheService, public employeeService: EmployeeService,
-              public qualificationService: QualificationService) {
+  constructor(private qualificationCacheService
+  :QualificationsCacheService, public employeeService: EmployeeService) {
   }
 
 
@@ -65,8 +64,6 @@ export class EmployeeComponent implements OnInit, OnDestroy{
       subscribe((employee: Employee) => {
       this.emp = employee;
     });
-
-    this.employeeCacheService.refresh();
 
     const labels : Label <Qualification> [] = [
       new Label('id', 'ID'),
