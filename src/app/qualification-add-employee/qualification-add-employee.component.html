@@ -1,1 +1,49 @@
-<p>qualification-add-employee works!</p>
+<div class="container-fluid">
+  <div class="row ">
+    <div class="page-title">
+      <!--page title-->
+      @if (id) {
+        <h3 class="ps-5">Edit Qualification &rarr; Add Employee</h3>
+        <p class="ps-5">ID: {{ id }}</p>
+      } @else {
+        <h3 class="ps-5">New Qualification &rarr; Add Employee</h3>
+      }
+    </div>
+  </div>
+  <div class="row ">
+    <!--left components-->
+    <div class="col-5">
+      <!--Filter-->
+      <div class="content-wrapper">
+        <app-text-filter
+          [title]="'Employee First/Last Name'"
+          (eventTriggered)="handleEventFilter($event)"
+        ></app-text-filter>
+
+        <!--all qualifications-->
+        <app-table [configuration]="tableConfiguration"
+                   [data]="listedEmployees"></app-table>
+      </div>
+    </div>
+    <!--spacing-->
+    <div class="col-2"></div>
+    <!--right component-->
+    <div class="col-5">
+      <!--New employee-->
+      <div class="content-wrapper">
+        <h3 class="ps-5">New Employee</h3>
+        <app-employee-form (formDataChange)="updateEmployeeForm($event)"></app-employee-form>
+        <app-button label="Add" (click)="addEmployee()"></app-button>
+      </div>
+    </div>
+  </div>
+  <div class="buttons-container">
+    <a routerLink="/{{returnUrl}}">
+      <app-button label="Cancel" (click)="clearChecks()"></app-button>
+    </a>
+    <a routerLink="/{{returnUrl}}">
+      <app-button label="save">Submit Data</app-button>
+    </a>
+  </div>
+
+</div>

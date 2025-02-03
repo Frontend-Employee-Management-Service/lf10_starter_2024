@@ -5,6 +5,7 @@ import { QualificationListComponent } from './qualification-list/qualification-l
 import { EmployeeComponent } from './employee/employee.component';
 import { QualificationComponent } from "./qualification/qualification.component";
 import { EmployeeAddQualificationComponent } from './employee-add-qualification/employee-add-qualification.component';
+import { QualificationAddEmployeeComponent } from "./qualification-add-employee/qualification-add-employee.component";
 
 
 export const routes: Routes = [
@@ -16,6 +17,8 @@ export const routes: Routes = [
   { path: 'employee/edit/:id/add_qualifications', title: "editEmployee addQualifications", component: EmployeeAddQualificationComponent, canActivate: [AppAuthGuard] },
   { path: 'qualification/new', title: "New qualification", component: QualificationComponent, canActivate: [AppAuthGuard] },
   { path: 'qualification/edit/:id', title: "Edit qualification", component: QualificationComponent, canActivate: [AppAuthGuard] },
+  { path: 'qualification/new/add_employees', title: "Edit qualification - Add employee", component: QualificationAddEmployeeComponent, canActivate: [AppAuthGuard] },
+  { path: 'qualification/edit/:id/add_employees', title: "Edit qualification - Add employee", component: QualificationAddEmployeeComponent, canActivate: [AppAuthGuard] },
   { path: '', redirectTo: '/employee', pathMatch: 'full' },
 
 ];
