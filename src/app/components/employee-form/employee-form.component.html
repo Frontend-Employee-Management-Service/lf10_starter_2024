@@ -4,7 +4,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">First Name</label>
       <div class="col-sm-2">
-        <input class="form-control input" [(ngModel)]="employee.firstName" (ngModelChange)="updateFormData()" name="firstname" type="text" placeholder="firstname">
+        <input class="form-control input" [(ngModel)]="employee.firstName" name="firstname"
+               (ngModelChange)="updateFormData()" type="text" placeholder="firstname">
       </div>
     </div>
 
@@ -12,7 +13,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">Surname</label>
       <div class="col-sm-2">
-        <input class="form-control input" [(ngModel)]="employee.firstName" name="lastname"  (ngModelChange)="updateFormData()" type="text"  placeholder="surname">
+        <input class="form-control input" [(ngModel)]="employee.lastName" name="lastname"
+               (ngModelChange)="updateFormData()" type="text" placeholder="surname">
       </div>
     </div>
 
@@ -20,7 +22,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">Street</label>
       <div class="col-sm-2">
-        <input class="form-control input" [(ngModel)]="employee.lastName" name="street"  (ngModelChange)="updateFormData()" type="text"  placeholder="street">
+        <input class="form-control input" [(ngModel)]="employee.street" name="street"
+               (ngModelChange)="updateFormData()" type="text" placeholder="street">
       </div>
     </div>
 
@@ -29,7 +32,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">City</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.city" name="city" (ngModelChange)="updateFormData()" type="text" class="form-control input"  placeholder="city">
+        <input class="form-control input" [(ngModel)]="employee.city" name="city"
+               (ngModelChange)="updateFormData()" type="text" placeholder="city">
       </div>
     </div>
 
@@ -37,7 +41,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">Postcode</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.postcode" name="postcode" (ngModelChange)="updateFormData()"  type="text" class="form-control input" placeholder="postcode">
+        <input class="form-control input" [(ngModel)]="employee.postcode" name="postcode"
+               (ngModelChange)="updateFormData()" type="text" placeholder="postcode">
       </div>
     </div>
 
@@ -45,7 +50,8 @@
     <div class="row align-items-center mb-3">
       <label class="col-sm-3 col-form-label col-md-1 label">Phone</label>
       <div class="col-sm-2">
-        <input [(ngModel)]="employee.phone" (ngModelChange)="updateFormData()" name ="phone" type="text" class="form-control input" placeholder="phone">
+        <input class="form-control input" [(ngModel)]="employee.phone" name="phone"
+               (ngModelChange)="updateFormData()" type="text" placeholder="phone">
       </div>
     </div>
   </div>
