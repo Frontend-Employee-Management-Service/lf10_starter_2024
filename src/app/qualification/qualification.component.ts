@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common";
 import {ButtonComponent} from "../components/button/button.component";
 import {TableComponent} from "../components/table/table.component";
 import {QualificationFormComponent} from "../components/qualification-form/qualification-form.component";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {QualificationService} from "../services/qualification.service";
 import {Subscription} from "rxjs";
 import {Qualification} from "../models/Qualification";
@@ -21,7 +21,7 @@ import {EmployeeService} from "../services/employee.service";
 @Component({
   selector: 'app-qualification',
   standalone: true,
-  imports: [QualificationFormComponent, FormsModule, CommonModule, ButtonComponent, TableComponent, EmployeeFormComponent],
+  imports: [QualificationFormComponent, FormsModule, CommonModule, ButtonComponent, TableComponent, EmployeeFormComponent, RouterLink],
   templateUrl: './qualification.component.html',
   styleUrl: './qualification.component.css'
 })
