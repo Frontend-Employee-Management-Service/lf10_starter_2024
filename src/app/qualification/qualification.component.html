@@ -16,11 +16,11 @@
   </div>
   <div class="position-absolute" style="right: 9%; bottom: 74%;">
     @if (id) {
-      <a routerLink="/qualification/edit/{{id}}/add_employees">
+      <a [routerLink]="['/qualification/edit', id, 'add_employees']">
         <app-button label="Add">Submit Data</app-button>
       </a>
     } @else {
-      <a routerLink="/qualification/new/add_employees">
+      <a [routerLink]="['/qualification/new/add_employees']">
         <app-button label="Add">Submit Data</app-button>
       </a>
     }
