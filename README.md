@@ -2,7 +2,7 @@
 
 Die vorgenommene Erweiterung dieses Frontends ist technischer Natur. Mit dem Ziel der Performance-Verbesserung, insbesondere im Hinblick
 auf ein Szenario mit einem Service/Microservice-Cluster, vielen Benutzern und stark ausgelasteten Netzwerk, wurde eine **Caching-Funktionalität** umgesetzt. So wird
-versucht die Anzahl von abgesetzten HTTP-Requests auf ein Mininum zu beschränken und stattdessen nach Möglichkeit Daten lokal vorzuhalten.
+versucht die Anzahl von abgesetzten HTTP-Requests auf ein Minimum zu beschränken und stattdessen nach Möglichkeit Daten lokal vorzuhalten.
   
 Dieser Ansatz widerspricht z.T. der automatischen Reaktivitätsphilosophie von Angular, was in der Entwicklung immer wieder zu Problemen und erhöhten Zeitaufwand führte.
 Aus einer Wirtschaftlichkeitsperspektive muss man abwegen, ob die tatsächlich messbaren Performance-Verbesserungen den Mehraufwand in Entwicklung und Wartung wert sind.
