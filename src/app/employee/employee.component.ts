@@ -48,6 +48,18 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
 
   ngOnInit(): void {
+    if(AppGlobals.UNSAVED_EMPLOYEE.size>0){
+      this.employeeCache.notifyStateChange();
+      const newEmployee = new Employee();
+      newEmployee.firstName = AppGlobals.UNSAVED_EMPLOYEE.get('name')!;
+      newEmployee.lastName = AppGlobals.UNSAVED_EMPLOYEE.get('surname')!;
+      newEmployee.street = AppGlobals.UNSAVED_EMPLOYEE.get('street')!;
+      newEmployee.city = AppGlobals.UNSAVED_EMPLOYEE.get('city')!;
+      newEmployee.postcode = AppGlobals.UNSAVED_EMPLOYEE.get('post')!;
+      newEmployee.phone = AppGlobals.UNSAVED_EMPLOYEE.get('phone')!;
+      this.formDataEmployee = newEmployee;
+    }
+
     this.id = this.activatedRoute.snapshot.params['id'];
     this.employeeCache.refresh();
     this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
@@ -63,8 +75,9 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     this.employeeSigal = computed(() => {
       this.employeeCache.detectStateChange();
       const e = this.employeeCache.select(this.id);
-      this.formDataEmployee = e;
-      return e ?? new Employee();
+      //this.formDataEmployee = e;
+      const form =this.formDataEmployee;
+      return form ?? e ?? new Employee();
     });
   }
 
@@ -124,6 +137,13 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   updateEmployeeData(data: Employee) {
     this.formDataEmployee = data;
+    this.clearEmployee();
+    AppGlobals.UNSAVED_EMPLOYEE.set('name', data.firstName!);
+    AppGlobals.UNSAVED_EMPLOYEE.set('surname', data.lastName!);
+    AppGlobals.UNSAVED_EMPLOYEE.set('street', data.street!);
+    AppGlobals.UNSAVED_EMPLOYEE.set('city', data.city!);
+    AppGlobals.UNSAVED_EMPLOYEE.set('post', data.postcode!);
+    AppGlobals.UNSAVED_EMPLOYEE.set('phone', data.phone!);
   }
 
   submitDataToBackend() {
@@ -138,10 +158,15 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     }
     AppGlobals.DIRTY_URLS.delete(this.id);
     // this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
+    this.clearEmployee();
   }
 
   ngOnDestroy(): void {
     this.displayedQualificationsSignal().forEach(val => this.qualificationCache.addToSelected(this.activatedRoute.snapshot.url.join("/"), val));
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  clearEmployee (): void {
+    AppGlobals.UNSAVED_EMPLOYEE = new Map<string, string>();
   }
 }
