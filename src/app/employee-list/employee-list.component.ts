@@ -11,6 +11,7 @@ import { SelectionBehaviour } from '../components/table/selection-behaviour';
 import { Routing } from '../components/table/routing';
 import { ButtonComponent } from "../components/button/button.component";
 import { RouterLink, RouterModule } from '@angular/router';
+import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-employee-list',
@@ -51,6 +52,7 @@ export class EmployeeListComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    AppGlobals.DIRTY_URLS.clear();
     const labels: Label<Employee>[] = [
       new Label("id", "ID"),
       new Label("lastName", "Last Name"),

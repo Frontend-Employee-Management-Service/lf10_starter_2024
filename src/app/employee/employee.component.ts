@@ -16,6 +16,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { EmployeeService } from '../services/employee.service';
 import { Subscription } from 'rxjs';
 import { AdHocCache } from '../services/ad-hoc-cache';
+import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-employee',
@@ -29,7 +30,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   id!: number;
   displayedQualificationsSignal!: Signal<Qualification[]>;
   isComponentDataLoaded: boolean = false;
-  formDataEmployee: Employee | undefined= undefined;
+  formDataEmployee: Employee | undefined = undefined;
   selectedData!: Qualification[];
   employeeSigal!: Signal<Employee>;
   configuration!: TableConfiguration<Employee>;
@@ -39,17 +40,17 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   constructor(
     private qualificationCache: QualificationsCacheService,
-    private employeeCache : EmployeesCacheService,
+    private employeeCache: EmployeesCacheService,
     private employeeService: EmployeeService
   ) {
     this.adHocCache = new AdHocCache([]);
   }
 
-  
+
   ngOnInit(): void {
-    this.employeeCache.refresh();
     this.id = this.activatedRoute.snapshot.params['id'];
-    this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/")); 
+    this.employeeCache.refresh();
+    this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
     this.adHocCache.setSignalFromArray(this.selectedData)
 
     this.computeFormContent();
@@ -57,7 +58,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     this.employeeCache.notifyStateChange();
     this.configureTable();
   }
-  
+
   private computeFormContent() {
     this.employeeSigal = computed(() => {
       this.employeeCache.detectStateChange();
@@ -94,21 +95,25 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
       this.adHocCache, labels, true, selectionBehaviour, routing
     );
   }
-  
+
   ngDoCheck(): void {
-    if(this.isComponentDataLoaded)
+    if (this.isComponentDataLoaded)
       return;
     this.employeeCache.notifyStateChange();
     const isCacheStillLoading: boolean = this.employeeCache.isLoading().has(-1);
-    if(!isCacheStillLoading){
+    if (!isCacheStillLoading) {
       this.isComponentDataLoaded = true;
       let qualifications: Qualification[] = [];
-      if (this.id) {
-        const e = this.employeeCache.select(this.id);
-        qualifications =  qualifications.concat(e?.qualifications ?? []);
+
+      if (!AppGlobals.DIRTY_URLS.has(this.id)) {
+        if (this.id) {
+          const e = this.employeeCache.select(this.id);
+          qualifications = qualifications.concat(e?.qualifications ?? []);
+          AppGlobals.DIRTY_URLS.add(this.id);
+        }
       }
       this.adHocCache.read()().forEach(outer => {
-        if(!qualifications.find(inner=> inner.id == outer.id)){
+        if (!qualifications.find(inner => inner.id == outer.id)) {
           qualifications.push(outer);
         }
 
@@ -125,12 +130,14 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     const employee: Employee = this.formDataEmployee ?? new Employee();
     employee.id = this.employeeSigal().id;
     employee.qualifications = this.displayedQualificationsSignal();
-    if(employee.id){
-      this.subscriptions.push(this.employeeService.update(employee).subscribe(()=>this.employeeCache.notifyStateChange()));
+    if (employee.id) {
+      this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
     }
-    else{
-      this.subscriptions.push(this.employeeService.insert(employee).subscribe(()=>this.employeeCache.notifyStateChange()));
+    else {
+      this.subscriptions.push(this.employeeService.insert(employee).subscribe(() => this.employeeCache.notifyStateChange()));
     }
+    AppGlobals.DIRTY_URLS.delete(this.id);
+    // this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
   }
 
   ngOnDestroy(): void {
