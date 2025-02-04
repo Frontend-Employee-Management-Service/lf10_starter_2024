@@ -14,11 +14,11 @@
     <div class="col-1">
       @if(id){
         <a routerLink="/employee/edit/{{id}}/add_qualifications">
-          <app-button label="Add" (click)="submitDataToBackend()">Submit Data</app-button>
+          <app-button label="Add"></app-button>
         </a>
       } @else {
         <a routerLink="/employee/new/add_qualifications">
-          <app-button label="Add" (click)="submitDataToBackend()">Submit Data</app-button>
+          <app-button label="Add"></app-button>
         </a>
       }
     </div>
