@@ -142,7 +142,7 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
   submitDataToBackend() {
     const touchedQualification: Qualification = this.qualificationFormData ?? new Qualification();
-    touchedQualification.id = this.qualificationSignal().id;
+    touchedQualification.id = this.id;
     if (touchedQualification.id) {
       this.subscriptions.push(this.qualificationService.update(touchedQualification).subscribe(() => this.qualificationCache.notifyStateChange()))
     } else {

@@ -127,7 +127,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   submitDataToBackend() {
     const employee: Employee = this.formDataEmployee ?? new Employee();
-    employee.id = this.employeeSignal().id;
+    employee.id = this.id;
     employee.qualifications = this.displayedQualificationsSignal();
     if (employee.id) {
       this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
