@@ -99,11 +99,8 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
       let qualifications: Qualification[] = [];
       if (this.id) {
         const e = this.employeeCache.select(this.id);
-        console.log(e),
         qualifications =  qualifications.concat(e?.qualifications ?? []);
       }
-      console.log(qualifications)
-      console.log(qualifications[0])
       this.adHocCache.setSignalFromArray(qualifications);
     }
   }
@@ -117,11 +114,9 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     employee.id = this.employeeSigal().id;
     employee.qualifications = this.displayedQualificationsSignal();
     if(employee.id){
-      console.log("update");
       this.subscriptions.push(this.employeeService.update(employee).subscribe());
     }
     else{
-      console.log("insert")
       this.subscriptions.push(this.employeeService.insert(employee).subscribe());
     }
   }
