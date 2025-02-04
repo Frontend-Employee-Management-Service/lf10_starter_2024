@@ -1,22 +1,22 @@
-import { Component, inject, OnInit, Signal, computed, DoCheck, OnDestroy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { EmployeeFormComponent } from "../components/employee-form/employee-form.component";
-import { CommonModule } from "@angular/common";
-import { Employee } from "../models/Employee";
-import { EmployeesCacheService } from "../services/employees-cache.service";
-import { ButtonComponent } from "../components/button/button.component";
-import { TableComponent } from "../components/table/table.component";
-import { TableConfiguration } from "../components/table/table-configuration";
-import { Label } from "../components/table/label";
-import { SelectionBehaviour } from "../components/table/selection-behaviour";
-import { QualificationsCacheService } from "../services/qualifications-cache.service";
-import { Qualification } from "../models/Qualification";
-import { Routing } from "../components/table/routing";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { EmployeeService } from '../services/employee.service';
-import { Subscription } from 'rxjs';
-import { AdHocCache } from '../services/ad-hoc-cache';
-import { AppGlobals } from '../app.globals';
+import {Component, inject, OnInit, Signal, computed, DoCheck, OnDestroy} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
+import {CommonModule} from "@angular/common";
+import {Employee} from "../models/Employee";
+import {EmployeesCacheService} from "../services/employees-cache.service";
+import {ButtonComponent} from "../components/button/button.component";
+import {TableComponent} from "../components/table/table.component";
+import {TableConfiguration} from "../components/table/table-configuration";
+import {Label} from "../components/table/label";
+import {SelectionBehaviour} from "../components/table/selection-behaviour";
+import {QualificationsCacheService} from "../services/qualifications-cache.service";
+import {Qualification} from "../models/Qualification";
+import {Routing} from "../components/table/routing";
+import {ActivatedRoute, RouterLink} from "@angular/router";
+import {EmployeeService} from '../services/employee.service';
+import {Subscription} from 'rxjs';
+import {AdHocCache} from '../services/ad-hoc-cache';
+import {AppGlobals} from '../app.globals';
 
 @Component({
   selector: 'app-employee',
@@ -46,19 +46,8 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     this.adHocCache = new AdHocCache([]);
   }
 
-
   ngOnInit(): void {
-    if(AppGlobals.UNSAVED_EMPLOYEE.size>0){
-      this.employeeCache.notifyStateChange();
-      const newEmployee = new Employee();
-      newEmployee.firstName = AppGlobals.UNSAVED_EMPLOYEE.get('name')!;
-      newEmployee.lastName = AppGlobals.UNSAVED_EMPLOYEE.get('surname')!;
-      newEmployee.street = AppGlobals.UNSAVED_EMPLOYEE.get('street')!;
-      newEmployee.city = AppGlobals.UNSAVED_EMPLOYEE.get('city')!;
-      newEmployee.postcode = AppGlobals.UNSAVED_EMPLOYEE.get('post')!;
-      newEmployee.phone = AppGlobals.UNSAVED_EMPLOYEE.get('phone')!;
-      this.formDataEmployee = newEmployee;
-    }
+    this.getSessionEmployee();
 
     this.id = this.activatedRoute.snapshot.params['id'];
     this.employeeCache.refresh();
@@ -75,8 +64,8 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     this.employeeSigal = computed(() => {
       this.employeeCache.detectStateChange();
       const e = this.employeeCache.select(this.id);
-      //this.formDataEmployee = e;
-      const form =this.formDataEmployee;
+      //this.formDataEmployee = e; this was the reason why the form is always reset.
+      const form = this.formDataEmployee;
       return form ?? e ?? new Employee();
     });
   }
@@ -137,7 +126,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   updateEmployeeData(data: Employee) {
     this.formDataEmployee = data;
-    this.clearEmployee();
+    AppGlobals.UNSAVED_EMPLOYEE = new Map<string, string>();
     AppGlobals.UNSAVED_EMPLOYEE.set('name', data.firstName!);
     AppGlobals.UNSAVED_EMPLOYEE.set('surname', data.lastName!);
     AppGlobals.UNSAVED_EMPLOYEE.set('street', data.street!);
@@ -158,7 +147,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     }
     AppGlobals.DIRTY_URLS.delete(this.id);
     // this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
-    this.clearEmployee();
+    this.clearSessionEmployee();
   }
 
   ngOnDestroy(): void {
@@ -166,7 +155,21 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  clearEmployee (): void {
+  clearSessionEmployee(): void {
     AppGlobals.UNSAVED_EMPLOYEE = new Map<string, string>();
+  }
+
+  getSessionEmployee(): void {
+    if (AppGlobals.UNSAVED_EMPLOYEE && AppGlobals.UNSAVED_EMPLOYEE.size > 0) {
+      this.employeeCache.notifyStateChange();
+      const newEmployee = new Employee();
+      newEmployee.firstName = AppGlobals.UNSAVED_EMPLOYEE.get('name')!;
+      newEmployee.lastName = AppGlobals.UNSAVED_EMPLOYEE.get('surname')!;
+      newEmployee.street = AppGlobals.UNSAVED_EMPLOYEE.get('street')!;
+      newEmployee.city = AppGlobals.UNSAVED_EMPLOYEE.get('city')!;
+      newEmployee.postcode = AppGlobals.UNSAVED_EMPLOYEE.get('post')!;
+      newEmployee.phone = AppGlobals.UNSAVED_EMPLOYEE.get('phone')!;
+      this.formDataEmployee = newEmployee;
+    }
   }
 }
