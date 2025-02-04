@@ -32,7 +32,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   isComponentDataLoaded: boolean = false;
   formDataEmployee: Employee | undefined = undefined;
   selectedData!: Qualification[];
-  employeeSigal!: Signal<Employee>;
+  employeeSignal!: Signal<Employee>;
   configuration!: TableConfiguration<Employee>;
   subscriptions: Subscription[] = [];
   adHocCache!: AdHocCache<Qualification>;
@@ -60,7 +60,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   private computeFormContent() {
-    this.employeeSigal = computed(() => {
+    this.employeeSignal = computed(() => {
       this.employeeCache.detectStateChange();
       const e = this.employeeCache.select(this.id);
       this.formDataEmployee = e;
@@ -118,7 +118,7 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   submitDataToBackend() {
     const employee: Employee = this.formDataEmployee ?? new Employee();
-    employee.id = this.employeeSigal().id;
+    employee.id = this.employeeSignal().id;
     employee.qualifications = this.displayedQualificationsSignal();
     if (employee.id) {
       this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
