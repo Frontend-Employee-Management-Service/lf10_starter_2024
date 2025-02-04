@@ -50,6 +50,16 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
 
   ngOnInit(): void {
+    if(AppGlobals.UNSAVED_QUALIFICATION != null &&
+      AppGlobals.UNSAVED_QUALIFICATION != "" &&
+      AppGlobals.UNSAVED_QUALIFICATION != undefined ){
+
+      let formdata = new Qualification();
+      formdata.skill = AppGlobals.UNSAVED_QUALIFICATION!;
+      if(this.id) formdata.id = this.id!;
+
+      this.qualificationFormData = formdata;
+    }
     this.employeeCache.refresh();
     this.qualificationCache.refresh();
     this.qualificationFormData
@@ -65,8 +75,9 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
     this.qualificationSignal = computed(() => {
       this.qualificationCache.detectStateChange();
       const qualification = this.qualificationCache.select(this.id!);
-      this.qualificationFormData = qualification;
-      return qualification ?? new Employee();
+      const form = this.qualificationFormData;
+      //this.qualificationFormData = qualification;
+      return form ?? qualification ?? new Qualification();
     });
   }
 
@@ -93,7 +104,7 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
     if (this.areCachesLoaded) {
       this.areCachesLoaded = true;
-      
+
       let employees: Employee[] = [];
       if (this.id && !AppGlobals.DIRTY_URLS.has(this.id)) {
         const qualification: Qualification | undefined = this.qualificationCache.select(this.id!);
@@ -157,9 +168,11 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
     })
     if (this.id)
       AppGlobals.DIRTY_URLS.delete(this.id);
+    this.clearSessionQualification();
   }
   updateQualificationData(data: Qualification) {
     this.qualificationFormData = data;
+    AppGlobals.UNSAVED_QUALIFICATION = data.skill!;
   }
 
   ngOnDestroy(): void {
@@ -167,6 +180,9 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  clearSessionQualification() : void{
+    AppGlobals.UNSAVED_QUALIFICATION = "";
+  }
 
 }
 
