@@ -56,7 +56,7 @@ export class QualificationAddEmployeeComponent {
     this.initTableConfiguration();
 
     this.listedEmployees = computed<Employee[]>(() => {
-      this.employeeCache.stateChangeSignal();
+      this.employeeCache.notifyStateChange();
       let result: Employee[] = this.employeeCache.read()();
       const keyword = this.keywordSignal();
       result = this.employeeFilter.filterEmployeesByNames(result,keyword);
