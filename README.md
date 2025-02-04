@@ -10,6 +10,17 @@ Ebenso muss die Frage gestellt werden, ob in einer (hier nur angenommenen) Perfo
 
 Um die Darstellung der einzelnen Komponenten sowie die Nutzung der Anwendung als Ganzes auf verschiedenen Geräten optimal und benutzerfreundlich zu gestalten, ist ein gewisses Maß an Responsiveness erforderlich. Dieser Aspekt wurde hier jedoch nicht konsequent umgesetzt und bietet noch Raum für Verbesserungen.
 
+Kurz vor der Abgabe des Projekts haben wir festgestellt, dass der ursprüngliche Cancel-Button auf den folgenden Seiten
+
+	•	employee-edit-add-qualification
+	•	employee-new-add-qualification
+	•	qualification-edit-add-employee
+	•	qualification-new-add-employee
+
+nicht wie erwartet den aktuellen Stand ohne zu speichern verwirft, sondern sich stattdessen wie der Save-Button verhält.
+Daher haben wir uns aus Zeitgründen dazu entschieden, den Cancel Button komplett rauszunehmen.
+Falls der Nutzer den bisherigen Stand nicht speichern möchte, kann er immer noch über den Broswe Zurück Button oder über die Auswahl der Sicht (in der Navbar) zurückkehren und den Vorgang damit abbrechen.
+
 # Starter für das LF10 Projekt
 
 
