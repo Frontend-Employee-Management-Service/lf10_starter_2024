@@ -8,6 +8,7 @@ Dieser Ansatz widerspricht z.T. der automatischen Reaktivitätsphilosophie von A
 Aus einer Wirtschaftlichkeitsperspektive muss man abwegen, ob die tatsächlich messbaren Performance-Verbesserungen den Mehraufwand in Entwicklung und Wartung wert sind.
 Ebenso muss die Frage gestellt werden, ob in einer (hier nur angenommenen) Performance-kritischen Umgebung die Wahl von Angular als Framework optimal ist.
 
+Um die Darstellung der einzelnen Komponenten sowie die Nutzung der Anwendung als Ganzes auf verschiedenen Geräten optimal und benutzerfreundlich zu gestalten, ist ein gewisses Maß an Responsiveness erforderlich. Dieser Aspekt wurde hier jedoch nicht konsequent umgesetzt und bietet noch Raum für Verbesserungen.
 
 # Starter für das LF10 Projekt
 
