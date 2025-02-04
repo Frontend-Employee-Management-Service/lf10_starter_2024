@@ -30,7 +30,7 @@
   <div class = "row">
     <div class="col-md-5 ps-5 p-2">
       <div class=" ">
-        <app-employee-form [employee]="employeeSigal()"(formDataChange)="updateEmployeeData($event)"></app-employee-form>
+        <app-employee-form [employee]="employeeSigal()" (formDataChange)="updateEmployeeData($event)"></app-employee-form>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
         <app-button label="Save" (click)="submitDataToBackend()"></app-button>
       </a>
       <a routerLink="/employee">
-        <app-button label="Cancel"></app-button>
+        <app-button label="Cancel" (click)="clearSessionEmployee()"></app-button>
       </a>
     </div>
 
