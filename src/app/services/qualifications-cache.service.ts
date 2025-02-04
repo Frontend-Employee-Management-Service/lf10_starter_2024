@@ -10,6 +10,7 @@ import { DataCache } from './data-cache';
 export class QualificationsCacheService extends DataCache<Qualification> {
   private static cache: WritableSignal<Qualification[]> = signal<Qualification[]>([]);
   private static selected: Map<string, Qualification[]> = new Map<string, Qualification[]>();
+  private readonly SELECT_ALL_ID = -1;
 
   constructor(private dataService: QualificationService) {
     super();
@@ -24,19 +25,37 @@ export class QualificationsCacheService extends DataCache<Qualification> {
   }
 
   refresh(): void {
+    this.isLoading.update(loadingIDs => loadingIDs.add(this.SELECT_ALL_ID));
     const data: Qualification[] = [];
-    const subscription: Subscription = this.dataService.selectAll().pipe(take(1))
+    const subscription: Subscription = this.dataService.selectAll()
+      .pipe(
+        take(1),
+        catchError(error => {
+          this.isLoading.update(loadingIDs => {
+            loadingIDs.delete(this.SELECT_ALL_ID);
+            return loadingIDs;
+          })
+          throw new Error(error);
+        })
+      )
       .subscribe(
         {
           next: (qualifications: Qualification[]) => {
             this.notifyStateChange();
             qualifications.forEach(entry => data.push(entry));
           },
-          complete: () => this.notifyStateChange()
+          complete: () => {
+            this.isLoading.update(loadingIDs => {
+              loadingIDs.delete(this.SELECT_ALL_ID);
+              return loadingIDs;
+            })
+            this.notifyStateChange();
+          }
         }
-      )
-    this.subscriptions.push(subscription);
+      );
     QualificationsCacheService.cache.set(data);
+    this.notifyStateChange();
+    this.subscriptions.push(subscription);
   }
 
   select(id: number): Qualification | undefined {
