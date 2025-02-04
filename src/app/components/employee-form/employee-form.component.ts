@@ -24,8 +24,4 @@ export class EmployeeFormComponent implements OnInit{
   updateFormData() {
     this.formDataChange.emit(this.employee);
   }
-
-
-
-
 }

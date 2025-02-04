@@ -1,81 +1,132 @@
-import {Component, inject, OnInit, Signal, computed, signal, WritableSignal, OnDestroy} from '@angular/core';
+import { Component, inject, OnInit, Signal, computed, DoCheck, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
-import {CommonModule} from "@angular/common";
-import {Employee} from "../models/Employee";
-import {EmployeesCacheService} from "../services/employees-cache.service";
-import {ButtonComponent} from "../components/button/button.component";
-import {TableComponent} from "../components/table/table.component";
-import {TableConfiguration} from "../components/table/table-configuration";
-import {Label} from "../components/table/label";
-import {SelectionBehaviour} from "../components/table/selection-behaviour";
-import {QualificationsCacheService} from "../services/qualifications-cache.service";
-import {Qualification} from "../models/Qualification";
-import {Routing} from "../components/table/routing";
-import {ActivatedRoute} from "@angular/router";
-import {EmployeeService} from "../services/employee.service";
-import {Subscription} from "rxjs";
-import {QualificationService} from "../services/qualification.service";
+import { EmployeeFormComponent } from "../components/employee-form/employee-form.component";
+import { CommonModule } from "@angular/common";
+import { Employee } from "../models/Employee";
+import { EmployeesCacheService } from "../services/employees-cache.service";
+import { ButtonComponent } from "../components/button/button.component";
+import { TableComponent } from "../components/table/table.component";
+import { TableConfiguration } from "../components/table/table-configuration";
+import { Label } from "../components/table/label";
+import { SelectionBehaviour } from "../components/table/selection-behaviour";
+import { QualificationsCacheService } from "../services/qualifications-cache.service";
+import { Qualification } from "../models/Qualification";
+import { Routing } from "../components/table/routing";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { EmployeeService } from '../services/employee.service';
+import { Subscription } from 'rxjs';
+import { AdHocCache } from '../services/ad-hoc-cache';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [EmployeeFormComponent, FormsModule, CommonModule, ButtonComponent, TableComponent],
+  imports: [EmployeeFormComponent, FormsModule, CommonModule, ButtonComponent, TableComponent, RouterLink],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
-export class EmployeeComponent implements OnInit, OnDestroy{
+export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   id!: number;
-  private subscription!: Subscription;
-
-  formDataEmployee: WritableSignal<Employee> = signal(new Employee());
-
-  emp!: Employee;
+  displayedQualificationsSignal!: Signal<Qualification[]>;
+  isComponentDataLoaded: boolean = false;
+  formDataEmployee: Employee | undefined= undefined;
+  selectedData!: Qualification[];
+  employeeSigal!: Signal<Employee>;
   configuration!: TableConfiguration<Employee>;
+  subscriptions: Subscription[] = [];
+  adHocCache!: AdHocCache<Qualification>;
 
-  constructor(private qualificationCacheService
-  :QualificationsCacheService, public employeeService: EmployeeService) {
+  constructor(
+    private qualificationCache: QualificationsCacheService,
+    private employeeCache : EmployeesCacheService,
+    private employeeService: EmployeeService
+  ) {
+    this.adHocCache = new AdHocCache([]);
   }
 
+  
+  ngOnInit(): void {
+    this.employeeCache.refresh();
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.computeFormContent();
+    this.computeTableContent();
+    this.employeeCache.notifyStateChange();
+    this.configureTable();
+    this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/")); 
+  }
+  
+  private computeFormContent() {
+    this.employeeSigal = computed(() => {
+      this.employeeCache.detectStateChange();
+      const e = this.employeeCache.select(this.id);
+      this.formDataEmployee = e;
+      return e ?? new Employee();
+    });
+  }
 
-  // Handle updates from the child
+  private computeTableContent() {
+    this.displayedQualificationsSignal = computed(() => {
+      this.adHocCache.detectStateChange();
+      let qualifications: Qualification[] = [];
+      this.adHocCache.read()().forEach(val => qualifications.push(val));
+      this.selectedData.forEach(outer => {
+        if(!qualifications.find(inner => inner.id == outer.id))
+          qualifications.push(outer);
+      })
+      return qualifications;
+    });
+  }
+
+  private configureTable() {
+    const labels: Label<Qualification>[] = [
+      new Label('id', 'ID'),
+      new Label('skill', 'Qualification'),
+    ];
+    const selectionBehaviour = new SelectionBehaviour(false, '');
+    const routing = new Routing(false, '');
+    this.configuration = new TableConfiguration<Qualification>(
+      this.adHocCache, labels, true, selectionBehaviour, routing
+    );
+  }
+  
+  ngDoCheck(): void {
+    if(this.isComponentDataLoaded)
+      return;
+    this.employeeCache.notifyStateChange();
+    const isCacheStillLoading: boolean = this.employeeCache.isLoading().has(-1);
+    if(!isCacheStillLoading){
+      this.isComponentDataLoaded = true;
+      let qualifications: Qualification[] = [];
+      if (this.id) {
+        const e = this.employeeCache.select(this.id);
+        console.log(e),
+        qualifications =  qualifications.concat(e?.qualifications ?? []);
+      }
+      console.log(qualifications)
+      console.log(qualifications[0])
+      this.adHocCache.setSignalFromArray(qualifications);
+    }
+  }
+
   updateEmployeeData(data: Employee) {
-    this.formDataEmployee.set(data); // Update local state
+    this.formDataEmployee = data;
   }
 
-  // Handle final form submission
   submitDataToBackend() {
-    if (this.formDataEmployee()){
-      this.employeeService.insert(this.emp);
+    const employee: Employee = this.formDataEmployee ?? new Employee();
+    employee.id = this.employeeSigal().id;
+    employee.qualifications = this.displayedQualificationsSignal();
+    if(employee.id){
+      console.log("update");
+      this.subscriptions.push(this.employeeService.update(employee).subscribe());
+    }
+    else{
+      console.log("insert")
+      this.subscriptions.push(this.employeeService.insert(employee).subscribe());
     }
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
-
-  ngOnInit(): void {
-    this.id = this.activatedRoute.snapshot.params['id'];
-
-    this.subscription = this.employeeService.select(this.id).
-      subscribe((employee: Employee) => {
-      this.emp = employee;
-    });
-
-    const labels : Label <Qualification> [] = [
-      new Label('id', 'ID'),
-      new Label('skill', 'Qualification'),
-    ]
-    const selectionBehaviour = new SelectionBehaviour(false,'');
-    const routing = new Routing(false, '');
-
-    this.configuration = new TableConfiguration<Qualification>(
-      this.qualificationCacheService, labels, true,selectionBehaviour, routing
-    )
-  }
-
-  protected readonly signal = signal;
 }

@@ -71,7 +71,7 @@ export class EmployeeAddQualificationComponent implements OnInit, DoCheck {
 
   private computeDisplayedData() {
     this.displayData = computed<Qualification[]>(() => {
-      this.qualificationsCache.stateChangeSignal(); 
+      this.qualificationsCache.detectStateChange(); 
       const qualificationSearchWord = this.qualificationSearchWordSignal();
       const inUse = this.inUseSignal();
       const unused = this.unusedSignal();

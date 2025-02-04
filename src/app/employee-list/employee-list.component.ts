@@ -1,8 +1,6 @@
-import {Component, computed, OnInit, Signal, signal, WritableSignal} from '@angular/core';
+import {Component, computed, OnDestroy, OnInit, Signal, signal, WritableSignal} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {HttpClient} from "@angular/common/http";
 import {Employee} from "../models/Employee";
-import {EmployeeService} from "../services/employee.service";
 import {EmployeesCacheService} from "../services/employees-cache.service";
 import {TextFilterComponent} from "../components/text-filter/text-filter.component";
 import {EmployeeFilterService} from "../services/employee-filter.service";
@@ -29,13 +27,13 @@ export class EmployeeListComponent implements OnInit{
   private keywords: WritableSignal<string[]> = signal(["", "", ""]);
   public tableConfiguration!: TableConfiguration<Employee>;
 
-  constructor(private http: HttpClient, private service: EmployeeService,
+  constructor(
               private employeeCache: EmployeesCacheService,
               private filterService: EmployeeFilterService) {
     employeeCache.refresh();
-
     this.listedEmployees = computed<Employee[]>(() => {
-      let result: Employee[] = this.employeeCache.read()(); 
+      this.employeeCache.detectStateChange();
+      let result: Employee[] = this.employeeCache.read()()
       const words = this.keywords();
       if (words[this.NAME]) {
         result = this.filterService.filterEmployeesByNames(result, words[this.NAME]);

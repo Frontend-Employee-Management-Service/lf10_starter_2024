@@ -1,7 +1,7 @@
-import {Injectable, signal, WritableSignal} from '@angular/core';
-import {EmployeeService} from "./employee.service";
-import {Employee} from "../models/Employee";
-import {catchError, Observable, Subscription, take} from "rxjs";
+import { Injectable, signal, WritableSignal } from '@angular/core';
+import { EmployeeService } from "./employee.service";
+import { Employee } from "../models/Employee";
+import { catchError, Observable, Subscription, take } from "rxjs";
 import { DataCache } from './data-cache';
 
 @Injectable({
@@ -10,11 +10,12 @@ import { DataCache } from './data-cache';
 export class EmployeesCacheService extends DataCache<Employee> {
   private static cache: WritableSignal<Employee[]> = signal<Employee[]>([]);
   private static selected: Map<string, Employee[]> = new Map<string, Employee[]>();
-  
+  private readonly SELECT_ALL_ID = -1;
+
   constructor(private employeeService: EmployeeService) {
     super();
   }
-  
+
   public override getSelectedData(): Map<string, Employee[]> {
     return EmployeesCacheService.selected;
   }
@@ -24,18 +25,36 @@ export class EmployeesCacheService extends DataCache<Employee> {
   }
 
   refresh() {
+    this.isLoading.update(loadingIDs => loadingIDs.add(this.SELECT_ALL_ID));
     const data: Employee[] = [];
-    const subscription: Subscription = this.employeeService.selectAll().pipe(take(1)).subscribe(
-      (employees: Employee[]) => {
-        this.notifyStateChange();
-        employees.forEach(employee => {
-          data.push(employee);
-        });
+    const subscription: Subscription = this.employeeService.selectAll()
+      .pipe(
+        take(1),
+        catchError(error => {
+          this.isLoading.update(loadingIDs => {
+            loadingIDs.delete(this.SELECT_ALL_ID);
+            return loadingIDs;
+          })
+          throw new Error(error);
+        })
+      )
+      .subscribe({
+        next: (employees: Employee[]) => {
+          this.isLoading.update(loadingIDs => {
+            loadingIDs.delete(this.SELECT_ALL_ID);
+            return loadingIDs;
+          })
+          employees.forEach(employee => {
+            data.push(employee);
+          });
+          this.notifyStateChange();
+        },
+        complete: () => this.notifyStateChange()
       }
-    );
+      );
     this.subscriptions.push(subscription);
-    this.notifyStateChange();
     EmployeesCacheService.cache.set(data);
+    this.notifyStateChange();
   }
 
   select(id: number): Employee | undefined {
@@ -58,46 +77,59 @@ export class EmployeesCacheService extends DataCache<Employee> {
   }
 
   update(employee: Employee) {
+    this.isLoading.update(loadingIDs => loadingIDs.add(employee.id!));
     const result$: Observable<Employee> = this.employeeService.update(employee);
+    let e: Employee | undefined = undefined;
     const subscription: Subscription = result$.subscribe(
-      (updatedEmployee: Employee) => {
-        this.notifyStateChange();
-        EmployeesCacheService.cache.update(data => {
-          data = data.filter(item => item.id !== employee.id);
-          data.push(updatedEmployee);
-          return data;
-        })
-      }
-    );
+      {
+        next: (updatedEmployee: Employee) => {
+          e = updatedEmployee;
+        },
+        complete: () =>{
+          if(e){
+            EmployeesCacheService.cache.update(data => {
+              data = data.filter(item => item.id != employee.id);
+              data.push(e!);
+              this.notifyStateChange();
+              return data;
+            });
+          }
+          this.notifyStateChange()
+          this.isLoading.update(loadingIDs => {
+            loadingIDs.delete(employee.id!);
+            return loadingIDs;
+          })
+        } 
+      });
     this.subscriptions.push(subscription);
   }
 
   delete(id: number): void {
-    this.isLoading.update(loadingIDs => loadingIDs.add(id)); 
+    this.isLoading.update(loadingIDs => loadingIDs.add(id));
 
     const subscription: Subscription = this.employeeService.delete(id)
-    .pipe(
-      take(1),
-      catchError(error=>{
-        this.isLoading.update(loadingIDs => {
-          loadingIDs.delete(id);
-          return loadingIDs;
-        }) 
-        throw new Error(error);
-      } 
-      ))
-    .subscribe(
-      {
-        complete: () =>  {
+      .pipe(
+        take(1),
+        catchError(error => {
           this.isLoading.update(loadingIDs => {
-            this.notifyStateChange();
-            EmployeesCacheService.cache.update(values => values.filter(entry => entry.id !== id))
             loadingIDs.delete(id);
             return loadingIDs;
           })
+          throw new Error(error);
         }
-      }
-    );    
+        ))
+      .subscribe(
+        {
+          complete: () => {
+            this.isLoading.update(loadingIDs => {
+              this.notifyStateChange();
+              EmployeesCacheService.cache.update(values => values.filter(entry => entry.id !== id))
+              loadingIDs.delete(id);
+              return loadingIDs;
+            })
+          }
+        }
+      );
     this.subscriptions.push(subscription);
   }
 }

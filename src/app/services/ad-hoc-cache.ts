@@ -35,19 +35,23 @@ export class AdHocCache<T extends { id?: number | undefined; }> extends DataCach
       } else {
         this.insert(dto);
       }
+      this.notifyStateChange();
       return data;
     });
   }
 
   public override delete(id: number): void {
     this.cache.update(data => data.filter(entry => entry.id != id));
+    this.notifyStateChange();
   }
 
   public setSignalFromArray(data: T[]) {
     this.cache.set(data);
+    this.notifyStateChange();
   }
 
   public setSignalFromSignal(data: Signal<T[]> | WritableSignal<T[]>) {
     this.cache.set(data());
+    this.notifyStateChange();
   }
 }
