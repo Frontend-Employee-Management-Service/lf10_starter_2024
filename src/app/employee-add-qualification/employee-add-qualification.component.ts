@@ -14,7 +14,6 @@ import { QualificationFormComponent } from "../components/qualification-form/qua
 import { EmployeesCacheService } from '../services/employees-cache.service';
 import { Employee } from '../models/Employee';
 import { QualificationFilterService } from '../services/qualification-filter.service';
-import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-employee-add-qualification',

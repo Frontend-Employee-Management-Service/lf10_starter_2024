@@ -1,22 +1,18 @@
-import {Component, computed, inject, signal, Signal, WritableSignal} from '@angular/core';
-import {TextFilterComponent} from "../components/text-filter/text-filter.component";
-import {EmployeeFormComponent} from "../components/employee-form/employee-form.component";
-import {Employee} from "../models/Employee";
-import {TableComponent} from "../components/table/table.component";
-import {TableConfiguration} from "../components/table/table-configuration";
-import {Qualification} from "../models/Qualification";
-import {EmployeeService} from "../services/employee.service";
-import {Label} from "../components/table/label";
-import {SelectionBehaviour} from "../components/table/selection-behaviour";
-import {Routing} from "../components/table/routing";
-import {HttpClient} from "@angular/common/http";
-import {EmployeesCacheService} from "../services/employees-cache.service";
-import {QualificationsCacheService} from "../services/qualifications-cache.service";
-import {QualificationFilterService} from "../services/qualification-filter.service";
-import {ButtonComponent} from "../components/button/button.component";
-import {ActivatedRoute, Router, RouterLink, UrlSegment} from "@angular/router";
-import {QualificationService} from "../services/qualification.service";
-import {EmployeeFilterService} from "../services/employee-filter.service";
+import { Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { TextFilterComponent } from "../components/text-filter/text-filter.component";
+import { EmployeeFormComponent } from "../components/employee-form/employee-form.component";
+import { Employee } from "../models/Employee";
+import { TableComponent } from "../components/table/table.component";
+import { TableConfiguration } from "../components/table/table-configuration";
+import { Qualification } from "../models/Qualification";
+import { Label } from "../components/table/label";
+import { SelectionBehaviour } from "../components/table/selection-behaviour";
+import { Routing } from "../components/table/routing";
+import { EmployeesCacheService } from "../services/employees-cache.service";
+import { QualificationsCacheService } from "../services/qualifications-cache.service";
+import { ButtonComponent } from "../components/button/button.component";
+import { ActivatedRoute, Router, RouterLink, UrlSegment } from "@angular/router";
+import { EmployeeFilterService } from "../services/employee-filter.service";
 
 @Component({
   selector: 'app-qualification-add-employee',
@@ -43,13 +39,12 @@ export class QualificationAddEmployeeComponent {
   //Form
   newEmployee: Employee = new Employee();
 
-  constructor(private http: HttpClient,
-              private route: ActivatedRoute,
-              private employeeService: EmployeeService,
-              private employeeCache: EmployeesCacheService,
-              private employeeFilter: EmployeeFilterService,
-              private qualificationCache: QualificationsCacheService,
-              private qualificationFilter: QualificationFilterService) {
+  constructor(
+    private route: ActivatedRoute,
+    private employeeCache: EmployeesCacheService,
+    private employeeFilter: EmployeeFilterService,
+    private qualificationCache: QualificationsCacheService,
+  ) {
 
     employeeCache.refresh();
     this.extractUrl();
@@ -59,34 +54,34 @@ export class QualificationAddEmployeeComponent {
       this.employeeCache.detectStateChange();
       let result: Employee[] = this.employeeCache.read()();
       const keyword = this.keywordSignal();
-      result = this.employeeFilter.filterEmployeesByNames(result,keyword);
+      result = this.employeeFilter.filterEmployeesByNames(result, keyword);
       return result;
     })
   }
 
-  extractUrl(){
+  extractUrl() {
     //From route
     const currentUrl: UrlSegment[] = this.route.snapshot.url;
     this.returnUrl = currentUrl.filter((val, index, arr) => index != arr.length - 1).join("/")
     if (currentUrl[1].toString() == "edit") {
       this.id = currentUrl[2].toString();
-      this.setCheckedEmployees();
+      // this.setCheckedEmployees();
     }
   }
 
-  setCheckedEmployees(){
+  setCheckedEmployees() {
     this.qualificationCache.refresh();
-    const qualificationId =Number(this.id);
-    const currentQualification= this.qualificationCache.read()()
+    const qualificationId = Number(this.id);
+    const currentQualification = this.qualificationCache.read()()
       .find(qualification => qualification.id == qualificationId);
-    if(currentQualification != undefined){
+    if (currentQualification != undefined) {
       const checkedEmployees =
         this.employeeFilter.filterEmployeesByQualificationId(this.employeeCache.read()(), qualificationId);
-      checkedEmployees.forEach(employee => {this.employeeCache.addToSelected(this.returnUrl, employee);});
+      checkedEmployees.forEach(employee => { this.employeeCache.addToSelected(this.returnUrl, employee); });
     }
   }
 
-  initTableConfiguration(){
+  initTableConfiguration() {
     const labels: Label<Employee>[] = [
       new Label('id', 'id'),
       new Label('firstName', 'Firstname'),
@@ -104,10 +99,6 @@ export class QualificationAddEmployeeComponent {
 
   updateEmployeeForm($event: Employee) {
     this.newEmployee = $event;
-  }
-
-  clearChecks(){
-    this.employeeCache.withdrawSelected(this.returnUrl);
   }
 
   addEmployee() {

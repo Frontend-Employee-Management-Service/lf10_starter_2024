@@ -18,6 +18,7 @@ import { EmployeesCacheService } from "../services/employees-cache.service";
 import { EmployeeService } from "../services/employee.service";
 import { QualificationsCacheService } from '../services/qualifications-cache.service';
 import { AdHocCache } from '../services/ad-hoc-cache';
+import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-qualification',
@@ -36,6 +37,7 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
   areCachesLoaded: boolean = false;
   selectedData!: Employee[];
   qualificationSignal!: Signal<Qualification>;
+  formerEmployeeCollection!: Employee[];
 
   constructor(
     private qualificationService: QualificationService,
@@ -48,7 +50,6 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
 
   ngOnInit(): void {
-    console.log(this.employeeCache.viewSelected())
     this.employeeCache.refresh();
     this.qualificationCache.refresh();
     this.qualificationFormData
@@ -56,6 +57,7 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
     this.computeTableContent();
     this.computeFormData();
     this.selectedData = this.employeeCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
+    this.adHocCache.setSignalFromArray(this.selectedData)
     this.qualificationCache.notifyStateChange();
   }
 
@@ -70,20 +72,20 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
   private computeTableContent() {
     this.tableData = computed(() => {
-      this.adHocCache.detectStateChange();
-      this.qualificationCache.detectStateChange();
-      this.employeeCache.detectStateChange();
-      let employees: Employee[] = this.adHocCache.read()();
-      this.selectedData.forEach(outer => {
-        if (!employees.find(inner => inner.id == outer.id))
-          employees.push(outer);
-      })
-      return employees;
+      // this.adHocCache.detectStateChange();
+      // this.qualificationCache.detectStateChange();
+      // this.employeeCache.detectStateChange();
+      // let employees: Employee[] = this.adHocCache.read()();
+      // this.selectedData.forEach(outer => {
+      //   if (!employees.find(inner => inner.id == outer.id))
+      //     employees.push(outer);
+      // })
+      // return employees;
+      return this.adHocCache.read()();
     });
   }
 
   ngDoCheck(): void {
-    console.log("do check")
     if (this.areCachesLoaded)
       return;
 
@@ -91,19 +93,22 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
 
     if (this.areCachesLoaded) {
       this.areCachesLoaded = true;
+      
       let employees: Employee[] = [];
-      if (this.id) {
-        console.log(this.id)
+      if (this.id && !AppGlobals.DIRTY_URLS.has(this.id)) {
         const qualification: Qualification | undefined = this.qualificationCache.select(this.id!);
         employees = this.employeeCache.read()();
-        console.log(employees);
-        console.log(qualification);
         if (qualification) {
           employees = this.employeeFilter.filterEmployeesByQualificationId(employees, qualification.id!);
+          this.formerEmployeeCollection = employees;
         }
-        console.log("filtered")
-        console.log(employees)
+        AppGlobals.DIRTY_URLS.add(this.id);
       }
+      this.adHocCache.read()().forEach(outer => {
+        if (!employees.find(inner => inner.id == outer.id)) {
+          employees.push(outer);
+        }
+      });
       this.adHocCache.setSignalFromArray(employees);
       this.adHocCache.notifyStateChange();
     }
@@ -125,21 +130,40 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   submitDataToBackend() {
-    const qualification: Qualification = this.qualificationFormData ?? new Qualification();
-    qualification.id = this.qualificationSignal().id;
-    if (qualification.id) {
-      this.subscriptions.push(this.qualificationService.update(qualification).subscribe())
+    const touchedQualification: Qualification = this.qualificationFormData ?? new Qualification();
+    touchedQualification.id = this.qualificationSignal().id;
+    if (touchedQualification.id) {
+      this.subscriptions.push(this.qualificationService.update(touchedQualification).subscribe(() => this.qualificationCache.notifyStateChange()))
     } else {
-      this.subscriptions.push(this.qualificationService.insert(qualification).subscribe())
+      this.subscriptions.push(this.qualificationService.insert(touchedQualification).subscribe(() => this.qualificationCache.notifyStateChange()))
     }
-    // TODO persist employees with new qualifications
+    const listedEmployees: Employee[] = this.adHocCache.read()();
+    listedEmployees.forEach(employee => {
+      const qualifications = employee.qualifications ?? [];
 
+      if (!qualifications.find(entry => entry.id == touchedQualification.id)) {
+        employee.qualifications?.push(touchedQualification);
+      } else {
+        employee.qualifications = qualifications.filter(entry => entry.id != touchedQualification.id);
+        employee.qualifications.push(touchedQualification);
+      }
+      this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
+    })
+    const stupidEmployees = this.formerEmployeeCollection.filter(outer => !listedEmployees.find(inner => outer.id == inner.id))
+    stupidEmployees.forEach(employee => {
+      const qualifications = (employee.qualifications ?? []).filter(qualification => qualification.id != touchedQualification.id);
+      employee.qualifications = qualifications;
+      this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
+    })
+    if (this.id)
+      AppGlobals.DIRTY_URLS.delete(this.id);
   }
   updateQualificationData(data: Qualification) {
     this.qualificationFormData = data;
   }
 
   ngOnDestroy(): void {
+    this.tableData().forEach(val => this.employeeCache.addToSelected(this.activatedRoute.snapshot.url.join("/"), val));
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 

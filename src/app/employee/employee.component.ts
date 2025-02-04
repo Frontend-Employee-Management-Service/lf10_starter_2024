@@ -70,16 +70,6 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   private computeTableContent() {
     this.displayedQualificationsSignal = computed(() => {
-      // this.adHocCache.detectStateChange();
-      // let qualifications: Qualification[] = [];
-      // this.adHocCache.read()().forEach(val => qualifications.push(val));
-      // if(this.addSelected){
-      //      this.selectedData.forEach(outer => {
-      //   if(!qualifications.find(inner => inner.id == outer.id))
-      //     qualifications.push(outer);
-      // })
-      // }
-      // return qualifications;
       return this.adHocCache.read()();
     });
   }
