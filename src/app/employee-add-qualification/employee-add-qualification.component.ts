@@ -14,6 +14,7 @@ import { QualificationFormComponent } from "../components/qualification-form/qua
 import { EmployeesCacheService } from '../services/employees-cache.service';
 import { Employee } from '../models/Employee';
 import { QualificationFilterService } from '../services/qualification-filter.service';
+import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-employee-add-qualification',
@@ -47,7 +48,7 @@ export class EmployeeAddQualificationComponent implements OnInit, DoCheck {
       return;
     let employee = this.employeesCache.read()().find(val => val.id == this.id as unknown as number);
     if(employee && this.id){
-      employee.qualifications?.forEach(val => this.qualificationsCache.addToSelected(this.returnUrl, val))
+      // employee.qualifications?.forEach(val => this.qualificationsCache.addToSelected(this.returnUrl, val))
       this.qualificationsCache.notifyStateChange();
       this.loaded = true;
     }
@@ -71,7 +72,7 @@ export class EmployeeAddQualificationComponent implements OnInit, DoCheck {
 
   private computeDisplayedData() {
     this.displayData = computed<Qualification[]>(() => {
-      this.qualificationsCache.stateChangeSignal(); 
+      this.qualificationsCache.detectStateChange(); 
       const qualificationSearchWord = this.qualificationSearchWordSignal();
       const inUse = this.inUseSignal();
       const unused = this.unusedSignal();
