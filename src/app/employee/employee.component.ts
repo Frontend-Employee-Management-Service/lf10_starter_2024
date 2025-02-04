@@ -123,5 +123,6 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.displayedQualificationsSignal().forEach(val => this.qualificationCache.addToSelected(this.activatedRoute.snapshot.url.join("/"), val));
   }
 }
