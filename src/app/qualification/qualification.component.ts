@@ -87,7 +87,7 @@ export class QualificationComponent implements OnInit, OnDestroy, DoCheck {
     if (this.areCachesLoaded)
       return;
 
-    this.areCachesLoaded = this.employeeCache.isLoading().has(-1) && this.qualificationCache.isLoading().has(-1);
+    this.areCachesLoaded = !this.employeeCache.isLoading().has(-1) && !this.qualificationCache.isLoading().has(-1);
 
     if (this.areCachesLoaded) {
       this.areCachesLoaded = true;
