@@ -8,7 +8,7 @@ Dieser Ansatz widerspricht z.T. der automatischen Reaktivitätsphilosophie von A
 Aus einer Wirtschaftlichkeitsperspektive muss man abwegen, ob die tatsächlich messbaren Performance-Verbesserungen den Mehraufwand in Entwicklung und Wartung wert sind.
 Ebenso muss die Frage gestellt werden, ob in einer (hier nur angenommenen) Performance-kritischen Umgebung die Wahl von Angular als Framework optimal ist.
 
-Um die Darstellung der einzelnen Komponenten sowie die Nutzung der Anwendung als Ganzes auf verschiedenen Geräten optimal und benutzerfreundlich zu gestalten, ist ein gewisses Maß an Responsiveness erforderlich. Dieser Aspekt wurde hier jedoch nicht konsequent umgesetzt und bietet noch Raum für Verbesserungen.
+Um die Darstellung der einzelnen Komponenten sowie die Nutzung der Anwendung als Ganzes auf verschiedenen Geräten optimal und benutzerfreundlich zu gestalten, ist ein gewisses Maß an Responsiveness erforderlich. Dieser Aspekt wurde hier jedoch nicht konsequent umgesetzt und bietet noch Raum für Verbesserungen. Zu erwähnen ist hier auch die noch ausstehende Fehlerbehandlung.
 
 Kurz vor der Abgabe des Projekts haben wir festgestellt, dass der ursprüngliche Cancel-Button auf den folgenden Seiten
 
@@ -18,8 +18,8 @@ Kurz vor der Abgabe des Projekts haben wir festgestellt, dass der ursprüngliche
 	•	qualification-new-add-employee
 
 nicht wie erwartet den aktuellen Stand ohne zu speichern verwirft, sondern sich stattdessen wie der Save-Button verhält.
-Daher haben wir uns aus Zeitgründen dazu entschieden, den Cancel Button komplett rauszunehmen.
-Falls der Nutzer den bisherigen Stand nicht speichern möchte, kann er immer noch über den Broswe Zurück Button oder über die Auswahl der Sicht (in der Navbar) zurückkehren und den Vorgang damit abbrechen.
+Daher haben wir uns aus Zeitgründen dazu entschieden, auf den Cancel-Button komplett zu verzichten.
+Falls der Nutzer den aktuellen Zustand nicht speichern möchte, kann er immer noch über den Browser-Button oder über die Auswahl der Sicht (in der Navbar) zurückkehren und den Vorgang damit abbrechen.
 
 # Starter für das LF10 Projekt
 
