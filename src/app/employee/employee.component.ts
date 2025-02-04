@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Signal, computed, DoCheck } from '@angular/core';
+import { Component, inject, OnInit, Signal, computed, DoCheck, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EmployeeFormComponent } from "../components/employee-form/employee-form.component";
 import { CommonModule } from "@angular/common";
@@ -14,6 +14,8 @@ import { Qualification } from "../models/Qualification";
 import { Routing } from "../components/table/routing";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { EmployeeService } from '../services/employee.service';
+import { Subscription } from 'rxjs';
+import { AdHocCache } from '../services/ad-hoc-cache';
 
 @Component({
   selector: 'app-employee',
@@ -22,7 +24,7 @@ import { EmployeeService } from '../services/employee.service';
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
-export class EmployeeComponent implements OnInit, DoCheck {
+export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   id!: number;
   displayedQualificationsSignal!: Signal<Qualification[]>;
@@ -31,12 +33,17 @@ export class EmployeeComponent implements OnInit, DoCheck {
   selectedData!: Qualification[];
   employeeSigal!: Signal<Employee>;
   configuration!: TableConfiguration<Employee>;
+  subscriptions: Subscription[] = [];
+  adHocCache!: AdHocCache<Qualification>;
 
   constructor(
     private qualificationCache: QualificationsCacheService,
     private employeeCache : EmployeesCacheService,
     private employeeService: EmployeeService
-  ) {}
+  ) {
+    this.adHocCache = new AdHocCache([]);
+  }
+
   
   ngOnInit(): void {
     this.employeeCache.refresh();
@@ -59,12 +66,9 @@ export class EmployeeComponent implements OnInit, DoCheck {
 
   private computeTableContent() {
     this.displayedQualificationsSignal = computed(() => {
-      this.employeeCache.detectStateChange();
+      this.adHocCache.detectStateChange();
       let qualifications: Qualification[] = [];
-      if (this.id) {
-        const e = this.employeeCache.select(this.id);
-        qualifications =  qualifications.concat(e?.qualifications ?? []);
-      }
+      this.adHocCache.read()().forEach(val => qualifications.push(val));
       this.selectedData.forEach(outer => {
         if(!qualifications.find(inner => inner.id == outer.id))
           qualifications.push(outer);
@@ -81,7 +85,7 @@ export class EmployeeComponent implements OnInit, DoCheck {
     const selectionBehaviour = new SelectionBehaviour(false, '');
     const routing = new Routing(false, '');
     this.configuration = new TableConfiguration<Qualification>(
-      this.qualificationCache, labels, true, selectionBehaviour, routing
+      this.adHocCache, labels, true, selectionBehaviour, routing
     );
   }
   
@@ -90,8 +94,18 @@ export class EmployeeComponent implements OnInit, DoCheck {
       return;
     this.employeeCache.notifyStateChange();
     const isCacheStillLoading: boolean = this.employeeCache.isLoading().has(-1);
-    if(!isCacheStillLoading)
+    if(!isCacheStillLoading){
       this.isComponentDataLoaded = true;
+      let qualifications: Qualification[] = [];
+      if (this.id) {
+        const e = this.employeeCache.select(this.id);
+        console.log(e),
+        qualifications =  qualifications.concat(e?.qualifications ?? []);
+      }
+      console.log(qualifications)
+      console.log(qualifications[0])
+      this.adHocCache.setSignalFromArray(qualifications);
+    }
   }
 
   updateEmployeeData(data: Employee) {
@@ -102,9 +116,17 @@ export class EmployeeComponent implements OnInit, DoCheck {
     const employee: Employee = this.formDataEmployee ?? new Employee();
     employee.id = this.employeeSigal().id;
     employee.qualifications = this.displayedQualificationsSignal();
-    if(employee.id)
-      this.employeeService.update(employee);
-    else
-      this.employeeService.insert(employee);     
+    if(employee.id){
+      console.log("update");
+      this.subscriptions.push(this.employeeService.update(employee).subscribe());
+    }
+    else{
+      console.log("insert")
+      this.subscriptions.push(this.employeeService.insert(employee).subscribe());
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
