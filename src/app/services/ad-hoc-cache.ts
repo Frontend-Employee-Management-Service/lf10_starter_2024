@@ -41,8 +41,11 @@ export class AdHocCache<T extends { id?: number | undefined; }> extends DataCach
   }
 
   public override delete(id: number): void {
-    this.cache.update(data => data.filter(entry => entry.id != id));
-    this.notifyStateChange();
+    console.log("adhoc delete")
+    this.cache.update(data => {
+      this.notifyStateChange();
+      return data.filter(entry => entry.id != id);
+    });
   }
 
   public setSignalFromArray(data: T[]) {

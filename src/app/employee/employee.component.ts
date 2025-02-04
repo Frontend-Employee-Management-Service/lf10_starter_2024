@@ -16,6 +16,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { EmployeeService } from '../services/employee.service';
 import { Subscription } from 'rxjs';
 import { AdHocCache } from '../services/ad-hoc-cache';
+import { AppGlobals } from '../app.globals';
 
 @Component({
   selector: 'app-employee',
@@ -29,32 +30,35 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
   id!: number;
   displayedQualificationsSignal!: Signal<Qualification[]>;
   isComponentDataLoaded: boolean = false;
-  formDataEmployee: Employee | undefined= undefined;
+  formDataEmployee: Employee | undefined = undefined;
   selectedData!: Qualification[];
   employeeSigal!: Signal<Employee>;
   configuration!: TableConfiguration<Employee>;
   subscriptions: Subscription[] = [];
   adHocCache!: AdHocCache<Qualification>;
+  addSelected: boolean = true;
 
   constructor(
     private qualificationCache: QualificationsCacheService,
-    private employeeCache : EmployeesCacheService,
+    private employeeCache: EmployeesCacheService,
     private employeeService: EmployeeService
   ) {
     this.adHocCache = new AdHocCache([]);
   }
 
-  
+
   ngOnInit(): void {
-    this.employeeCache.refresh();
     this.id = this.activatedRoute.snapshot.params['id'];
+    this.employeeCache.refresh();
+    this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
+    this.adHocCache.setSignalFromArray(this.selectedData)
+
     this.computeFormContent();
     this.computeTableContent();
     this.employeeCache.notifyStateChange();
     this.configureTable();
-    this.selectedData = this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/")); 
   }
-  
+
   private computeFormContent() {
     this.employeeSigal = computed(() => {
       this.employeeCache.detectStateChange();
@@ -66,14 +70,17 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
 
   private computeTableContent() {
     this.displayedQualificationsSignal = computed(() => {
-      this.adHocCache.detectStateChange();
-      let qualifications: Qualification[] = [];
-      this.adHocCache.read()().forEach(val => qualifications.push(val));
-      this.selectedData.forEach(outer => {
-        if(!qualifications.find(inner => inner.id == outer.id))
-          qualifications.push(outer);
-      })
-      return qualifications;
+      // this.adHocCache.detectStateChange();
+      // let qualifications: Qualification[] = [];
+      // this.adHocCache.read()().forEach(val => qualifications.push(val));
+      // if(this.addSelected){
+      //      this.selectedData.forEach(outer => {
+      //   if(!qualifications.find(inner => inner.id == outer.id))
+      //     qualifications.push(outer);
+      // })
+      // }
+      // return qualifications;
+      return this.adHocCache.read()();
     });
   }
 
@@ -88,19 +95,29 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
       this.adHocCache, labels, true, selectionBehaviour, routing
     );
   }
-  
+
   ngDoCheck(): void {
-    if(this.isComponentDataLoaded)
+    if (this.isComponentDataLoaded)
       return;
     this.employeeCache.notifyStateChange();
     const isCacheStillLoading: boolean = this.employeeCache.isLoading().has(-1);
-    if(!isCacheStillLoading){
+    if (!isCacheStillLoading) {
       this.isComponentDataLoaded = true;
       let qualifications: Qualification[] = [];
-      if (this.id) {
-        const e = this.employeeCache.select(this.id);
-        qualifications =  qualifications.concat(e?.qualifications ?? []);
+
+      if (!AppGlobals.DIRTY_URLS.has(this.id)) {
+        if (this.id) {
+          const e = this.employeeCache.select(this.id);
+          qualifications = qualifications.concat(e?.qualifications ?? []);
+          AppGlobals.DIRTY_URLS.add(this.id);
+        }
       }
+      this.adHocCache.read()().forEach(outer => {
+        if (!qualifications.find(inner => inner.id == outer.id)) {
+          qualifications.push(outer);
+        }
+
+      })
       this.adHocCache.setSignalFromArray(qualifications);
     }
   }
@@ -113,15 +130,18 @@ export class EmployeeComponent implements OnInit, DoCheck, OnDestroy {
     const employee: Employee = this.formDataEmployee ?? new Employee();
     employee.id = this.employeeSigal().id;
     employee.qualifications = this.displayedQualificationsSignal();
-    if(employee.id){
-      this.subscriptions.push(this.employeeService.update(employee).subscribe());
+    if (employee.id) {
+      this.subscriptions.push(this.employeeService.update(employee).subscribe(() => this.employeeCache.notifyStateChange()));
     }
-    else{
-      this.subscriptions.push(this.employeeService.insert(employee).subscribe());
+    else {
+      this.subscriptions.push(this.employeeService.insert(employee).subscribe(() => this.employeeCache.notifyStateChange()));
     }
+    AppGlobals.DIRTY_URLS.delete(this.id);
+    // this.qualificationCache.withdrawSelected(this.activatedRoute.snapshot.url.join("/"));
   }
 
   ngOnDestroy(): void {
+    this.displayedQualificationsSignal().forEach(val => this.qualificationCache.addToSelected(this.activatedRoute.snapshot.url.join("/"), val));
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
